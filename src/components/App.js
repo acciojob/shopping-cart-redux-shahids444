@@ -34,379 +34,357 @@ const products = [
   { id: 6, name: 'Laptop Sleeve', price: 39.99, image: '💼', rating: 4.4 }
 ];
 
-// CSS Styles
-const styles = {
-  container: {
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%)',
-    fontFamily: 'Arial, sans-serif'
-  },
-  wrapper: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '32px 16px'
-  },
-  header: {
-    textAlign: 'center',
-    marginBottom: '32px'
-  },
-  title: {
-    fontSize: '2.5rem',
-    fontWeight: 'bold',
-    color: '#1f2937',
-    marginBottom: '8px',
-    margin: '0'
-  },
-  subtitle: {
-    color: '#6b7280',
-    margin: '0'
-  },
-  nav: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginBottom: '32px'
-  },
-  navContainer: {
-    background: 'white',
-    borderRadius: '8px',
-    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-    padding: '4px'
-  },
-  navButton: {
-    padding: '12px 24px',
-    borderRadius: '8px',
-    fontWeight: '500',
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    marginRight: '4px'
-  },
-  navButtonActive: {
-    background: '#2563eb',
-    color: 'white',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-  },
-  navButtonInactive: {
-    color: '#6b7280',
-    background: 'transparent'
-  },
-  productGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-    gap: '24px'
-  },
-  productCard: {
-    background: 'white',
-    borderRadius: '12px',
-    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-    padding: '24px',
-    transition: 'all 0.3s ease'
-  },
-  productCardHover: {
-    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
-  },
-  productImage: {
-    fontSize: '4rem',
-    textAlign: 'center',
-    marginBottom: '12px'
-  },
-  productName: {
-    fontWeight: 'bold',
-    fontSize: '1.125rem',
-    color: '#1f2937',
-    marginBottom: '8px',
-    textAlign: 'center'
-  },
-  productRating: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '4px',
-    marginBottom: '8px'
-  },
-  productPrice: {
-    fontSize: '1.5rem',
-    fontWeight: 'bold',
-    color: '#2563eb',
-    textAlign: 'center',
-    marginBottom: '16px'
-  },
-  buttonGroup: {
-    display: 'flex',
-    gap: '8px'
-  },
-  addToCartButton: {
-    flex: '1',
-    padding: '8px 16px',
-    borderRadius: '8px',
-    fontWeight: '500',
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  addToCartButtonDefault: {
-    background: '#2563eb',
-    color: 'white'
-  },
-  addToCartButtonInCart: {
-    background: '#d1fae5',
-    color: '#065f46',
-    border: '1px solid #a7f3d0'
-  },
-  wishlistButton: {
-    padding: '8px 16px',
-    borderRadius: '8px',
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease'
-  },
-  wishlistButtonDefault: {
-    background: '#f3f4f6',
-    color: '#6b7280'
-  },
-  wishlistButtonActive: {
-    background: '#fecaca',
-    color: '#dc2626',
-    border: '1px solid #fca5a5'
-  },
-  cartContainer: {
-    background: 'white',
-    borderRadius: '12px',
-    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-    padding: '24px'
-  },
-  cartHeader: {
-    fontSize: '1.5rem',
-    fontWeight: 'bold',
-    marginBottom: '24px',
-    display: 'flex',
-    alignItems: 'center'
-  },
-  cartItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '16px',
-    padding: '16px',
-    border: '1px solid #e5e7eb',
-    borderRadius: '8px',
-    marginBottom: '16px'
-  },
-  cartItemImage: {
-    fontSize: '2rem'
-  },
-  cartItemDetails: {
-    flex: '1'
-  },
-  cartItemName: {
-    fontWeight: '600',
-    marginBottom: '4px'
-  },
-  cartItemPrice: {
-    color: '#6b7280'
-  },
-  quantityControls: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px'
-  },
-  quantityButton: {
-    width: '32px',
-    height: '32px',
-    borderRadius: '50%',
-    background: '#e5e7eb',
-    border: 'none',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'background 0.3s ease'
-  },
-  quantityDisplay: {
-    width: '32px',
-    textAlign: 'center',
-    fontWeight: '500'
-  },
-  cartItemTotal: {
-    textAlign: 'right'
-  },
-  cartItemTotalPrice: {
-    fontWeight: '600'
-  },
-  removeButton: {
-    color: '#dc2626',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    marginTop: '4px',
-    fontSize: '1.2rem'
-  },
-  cartSummary: {
-    borderTop: '1px solid #e5e7eb',
-    paddingTop: '16px',
-    marginTop: '24px'
-  },
-  summaryRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: '8px'
-  },
-  summaryTotal: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    fontSize: '1.25rem',
-    fontWeight: 'bold',
-    borderTop: '1px solid #e5e7eb',
-    paddingTop: '8px',
-    marginTop: '8px'
-  },
-  discountRow: {
-    color: '#059669'
-  },
-  emptyState: {
-    background: 'white',
-    borderRadius: '12px',
-    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-    padding: '32px',
-    textAlign: 'center'
-  },
-  emptyIcon: {
-    fontSize: '4rem',
-    marginBottom: '16px'
-  },
-  emptyTitle: {
-    fontSize: '1.25rem',
-    fontWeight: '600',
-    color: '#6b7280',
-    marginBottom: '8px'
-  },
-  emptySubtitle: {
-    color: '#9ca3af'
-  },
-  wishlistItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '16px',
-    padding: '16px',
-    border: '1px solid #e5e7eb',
-    borderRadius: '8px',
-    marginBottom: '16px'
-  },
-  wishlistItemImage: {
-    fontSize: '2rem'
-  },
-  wishlistItemDetails: {
-    flex: '1'
-  },
-  wishlistActions: {
-    display: 'flex',
-    gap: '8px'
-  },
-  wishlistActionButton: {
-    padding: '8px 16px',
-    borderRadius: '8px',
-    border: 'none',
-    cursor: 'pointer',
-    fontWeight: '500',
-    transition: 'all 0.3s ease'
-  },
-  wishlistAddButton: {
-    background: '#2563eb',
-    color: 'white'
-  },
-  wishlistRemoveButton: {
-    background: '#fecaca',
-    color: '#dc2626'
-  },
-  couponSection: {
-    marginBottom: '24px'
-  },
-  couponInputGroup: {
-    display: 'flex',
-    gap: '8px',
-    marginBottom: '16px'
-  },
-  couponInput: {
-    flex: '1',
-    padding: '8px 16px',
-    border: '1px solid #d1d5db',
-    borderRadius: '8px',
-    outline: 'none',
-    transition: 'border-color 0.3s ease'
-  },
-  couponApplyButton: {
-    padding: '8px 24px',
-    background: '#059669',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    transition: 'background 0.3s ease'
-  },
-  couponApplyButtonDisabled: {
-    background: '#d1d5db',
-    cursor: 'not-allowed'
-  },
-  couponNotification: {
-    padding: '12px',
-    background: '#d1fae5',
-    borderRadius: '8px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: '12px'
-  },
-  couponNotificationText: {
-    color: '#065f46',
-    fontWeight: '500'
-  },
-  couponRemoveButton: {
-    color: '#065f46',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    fontSize: '1.1rem'
-  },
-  availableCoupons: {
-    marginTop: '16px'
-  },
-  availableCouponsTitle: {
-    fontWeight: '600',
-    marginBottom: '12px'
-  },
-  couponCard: {
-    padding: '12px',
-    border: '2px dashed #d1d5db',
-    borderRadius: '8px',
-    marginBottom: '8px'
-  },
-  couponCardContent: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  couponCode: {
-    fontFamily: 'monospace',
-    fontWeight: 'bold',
-    color: '#2563eb'
-  },
-  couponDescription: {
-    fontSize: '0.875rem',
-    color: '#6b7280'
-  },
-  footer: {
-    marginTop: '48px',
-    textAlign: 'center',
-    color: '#6b7280'
-  },
-  icon: {
-    display: 'inline-block',
-    fontSize: '1.2em',
-    marginRight: '8px'
+// CSS Styles for Bootstrap-like appearance
+const styles = `
+  * {
+    box-sizing: border-box;
   }
-};
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f8f9fa;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+
+  .navbar-expand-lg {
+    background-color: #343a40;
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+  }
+
+  .text-center {
+    text-align: center;
+    color: white;
+    margin: 0;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -15px;
+  }
+
+  .col-lg-3,
+  .col-md-6,
+  .col-sm-12 {
+    padding: 0 15px;
+    margin-bottom: 30px;
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+
+  @media (max-width: 992px) {
+    .col-lg-3 {
+      flex: 0 0 50%;
+      max-width: 50%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .col-lg-3 {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+
+  .custom-card.card {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    background: white;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: box-shadow 0.15s ease-in-out;
+  }
+
+  .custom-card.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+
+  .card-body {
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  .card-title {
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #212529;
+  }
+
+  .card-text {
+    margin-bottom: 1rem;
+    color: #6c757d;
+  }
+
+  .product-image {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  .product-price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 1rem;
+  }
+
+  .btn {
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.375rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    cursor: pointer;
+    margin: 0.25rem;
+  }
+
+  .btn-primary {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+
+  .btn-primary:hover {
+    color: #fff;
+    background-color: #0056b3;
+    border-color: #0056b3;
+  }
+
+  .btn-success {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+
+  .btn-success:hover {
+    color: #fff;
+    background-color: #218838;
+    border-color: #1e7e34;
+  }
+
+  .btn-danger {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+
+  .btn-danger:hover {
+    color: #fff;
+    background-color: #c82333;
+    border-color: #bd2130;
+  }
+
+  .btn-outline-secondary {
+    color: #6c757d;
+    background-color: transparent;
+    border-color: #6c757d;
+  }
+
+  .btn-outline-secondary:hover {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
+
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+  }
+
+  .mt-4 {
+    margin-top: 1.5rem;
+  }
+
+  .mb-4 {
+    margin-bottom: 1.5rem;
+  }
+
+  .cart-section,
+  .wishlist-section {
+    background: white;
+    border-radius: 0.375rem;
+    padding: 2rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 2rem;
+  }
+
+  .cart-item,
+  .wishlist-item {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .cart-item-details {
+    flex: 1;
+  }
+
+  .quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .quantity-display {
+    min-width: 2rem;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .cart-summary {
+    border-top: 1px solid #dee2e6;
+    padding-top: 1rem;
+    margin-top: 1rem;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .summary-total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 1.125rem;
+    border-top: 1px solid #dee2e6;
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #6c757d;
+  }
+
+  .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  .nav-tabs {
+    display: flex;
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 2rem;
+  }
+
+  .nav-link {
+    padding: 0.5rem 1rem;
+    border: 1px solid transparent;
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+    color: #495057;
+    background: none;
+    cursor: pointer;
+    text-decoration: none;
+    margin-bottom: -1px;
+  }
+
+  .nav-link.active {
+    color: #495057;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+  }
+
+  .nav-link:hover {
+    border-color: #e9ecef #e9ecef #dee2e6;
+  }
+
+  .coupon-section {
+    background: white;
+    border-radius: 0.375rem;
+    padding: 2rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+
+  .form-control {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+
+  .form-control:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+
+  .input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .input-group .form-control {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    margin-bottom: 0;
+  }
+
+  .input-group-append {
+    margin-left: -1px;
+  }
+
+  .alert {
+    position: relative;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+  }
+
+  .alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+  }
+
+  .btn-close {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: inherit;
+  }
+`;
 
 // Redux Reducer
 const cartReducer = (state, action) => {
@@ -527,48 +505,27 @@ const ProductCard = ({ product }) => {
   const isInWishlist = state.wishlist.some(item => item.id === product.id);
   const isInCart = state.cart.some(item => item.id === product.id);
 
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
-    <div 
-      style={{
-        ...styles.productCard,
-        ...(isHovered ? styles.productCardHover : {})
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div style={styles.productImage}>{product.image}</div>
-      <h3 style={styles.productName}>{product.name}</h3>
-      <div style={styles.productRating}>
-        <span style={{ color: '#fbbf24' }}>★</span>
-        <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>{product.rating}</span>
-      </div>
-      <p style={styles.productPrice}>${product.price}</p>
-      
-      <div style={styles.buttonGroup}>
-        <button
-          onClick={() => addToCart(product)}
-          style={{
-            ...styles.addToCartButton,
-            ...(isInCart ? styles.addToCartButtonInCart : styles.addToCartButtonDefault)
-          }}
-          data-testid={`add-to-cart-${product.id}`}
-        >
-          <span style={styles.icon}>🛒</span>
-          {isInCart ? 'In Cart' : 'Add to Cart'}
-        </button>
-        
-        <button
-          onClick={() => isInWishlist ? removeFromWishlist(product) : addToWishlist(product)}
-          style={{
-            ...styles.wishlistButton,
-            ...(isInWishlist ? styles.wishlistButtonActive : styles.wishlistButtonDefault)
-          }}
-          data-testid={`add-to-wishlist-${product.id}`}
-        >
-          {isInWishlist ? '❤️' : '🤍'}
-        </button>
+    <div className="col-lg-3 col-md-6 col-sm-12">
+      <div className="custom-card card">
+        <div className="card-body">
+          <div className="product-image">{product.image}</div>
+          <h5 className="card-title">{product.name}</h5>
+          <p className="card-text">⭐ {product.rating}</p>
+          <div className="product-price">${product.price}</div>
+          <button
+            className="btn btn-primary"
+            onClick={() => addToCart(product)}
+          >
+            {isInCart ? 'In Cart' : 'Add to Cart'}
+          </button>
+          <button
+            className={`btn ${isInWishlist ? 'btn-danger' : 'btn-outline-secondary'}`}
+            onClick={() => isInWishlist ? removeFromWishlist(product) : addToWishlist(product)}
+          >
+            {isInWishlist ? '❤️' : '🤍'}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -593,55 +550,51 @@ const Cart = () => {
 
   if (state.cart.length === 0) {
     return (
-      <div style={styles.emptyState}>
-        <div style={styles.emptyIcon}>🛒</div>
-        <h3 style={styles.emptyTitle}>Your cart is empty</h3>
-        <p style={styles.emptySubtitle}>Add some products to get started!</p>
+      <div className="cart-section">
+        <div className="empty-state">
+          <div className="empty-icon">🛒</div>
+          <h3>Your cart is empty</h3>
+          <p>Add some products to get started!</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={styles.cartContainer}>
-      <h2 style={styles.cartHeader}>
-        <span style={styles.icon}>🛒</span>
-        Shopping Cart ({state.cart.length})
-      </h2>
+    <div className="cart-section">
+      <h2>Shopping Cart ({state.cart.length})</h2>
       
       <div>
         {state.cart.map(item => (
-          <div key={item.id} style={styles.cartItem}>
-            <div style={styles.cartItemImage}>{item.image}</div>
-            <div style={styles.cartItemDetails}>
-              <h4 style={styles.cartItemName}>{item.name}</h4>
-              <p style={styles.cartItemPrice}>${item.price}</p>
+          <div key={item.id} className="cart-item">
+            <div className="product-image" style={{ fontSize: '2rem' }}>{item.image}</div>
+            <div className="cart-item-details">
+              <h5>{item.name}</h5>
+              <p>${item.price}</p>
             </div>
             
-            <div style={styles.quantityControls}>
+            <div className="quantity-controls">
               <button
+                className="btn btn-sm btn-outline-secondary"
                 onClick={() => decreaseQuantity(item)}
-                style={styles.quantityButton}
                 disabled={item.quantity <= 1}
-                data-testid={`decrease-quantity-${item.id}`}
               >
-                ➖
+                -
               </button>
-              <span style={styles.quantityDisplay}>{item.quantity}</span>
+              <span className="quantity-display">{item.quantity}</span>
               <button
+                className="btn btn-sm btn-outline-secondary"
                 onClick={() => increaseQuantity(item)}
-                style={styles.quantityButton}
-                data-testid={`increase-quantity-${item.id}`}
               >
-                ➕
+                +
               </button>
             </div>
             
-            <div style={styles.cartItemTotal}>
-              <div style={styles.cartItemTotalPrice}>${(item.price * item.quantity).toFixed(2)}</div>
+            <div style={{ textAlign: 'right' }}>
+              <div><strong>${(item.price * item.quantity).toFixed(2)}</strong></div>
               <button
+                className="btn btn-sm btn-danger"
                 onClick={() => removeFromCart(item)}
-                style={styles.removeButton}
-                data-testid={`remove-from-cart-${item.id}`}
               >
                 🗑️
               </button>
@@ -650,18 +603,18 @@ const Cart = () => {
         ))}
       </div>
 
-      <div style={styles.cartSummary}>
-        <div style={styles.summaryRow}>
+      <div className="cart-summary">
+        <div className="summary-row">
           <span>Subtotal:</span>
           <span>${subtotal.toFixed(2)}</span>
         </div>
         {state.appliedCoupon && (
-          <div style={{ ...styles.summaryRow, ...styles.discountRow }}>
+          <div className="summary-row" style={{ color: '#28a745' }}>
             <span>Discount ({state.appliedCoupon.code}):</span>
             <span>-${discount.toFixed(2)}</span>
           </div>
         )}
-        <div style={styles.summaryTotal}>
+        <div className="summary-total">
           <span>Total:</span>
           <span>${total.toFixed(2)}</span>
         </div>
@@ -676,40 +629,38 @@ const Wishlist = () => {
 
   if (state.wishlist.length === 0) {
     return (
-      <div style={styles.emptyState}>
-        <div style={styles.emptyIcon}>💝</div>
-        <h3 style={styles.emptyTitle}>Your wishlist is empty</h3>
-        <p style={styles.emptySubtitle}>Save items you love for later!</p>
+      <div className="wishlist-section">
+        <div className="empty-state">
+          <div className="empty-icon">💝</div>
+          <h3>Your wishlist is empty</h3>
+          <p>Save items you love for later!</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={styles.cartContainer}>
-      <h2 style={styles.cartHeader}>
-        <span style={styles.icon}>❤️</span>
-        Wishlist ({state.wishlist.length})
-      </h2>
+    <div className="wishlist-section">
+      <h2>Wishlist ({state.wishlist.length})</h2>
       
       <div>
         {state.wishlist.map(item => (
-          <div key={item.id} style={styles.wishlistItem}>
-            <div style={styles.wishlistItemImage}>{item.image}</div>
-            <div style={styles.wishlistItemDetails}>
-              <h4 style={styles.cartItemName}>{item.name}</h4>
-              <p style={styles.cartItemPrice}>${item.price}</p>
+          <div key={item.id} className="wishlist-item">
+            <div className="product-image" style={{ fontSize: '2rem' }}>{item.image}</div>
+            <div className="cart-item-details">
+              <h5>{item.name}</h5>
+              <p>${item.price}</p>
             </div>
-            <div style={styles.wishlistActions}>
+            <div>
               <button
+                className="btn btn-primary"
                 onClick={() => addToCart(item)}
-                style={{ ...styles.wishlistActionButton, ...styles.wishlistAddButton }}
               >
                 Add to Cart
               </button>
               <button
+                className="btn btn-danger"
                 onClick={() => removeFromWishlist(item)}
-                style={{ ...styles.wishlistActionButton, ...styles.wishlistRemoveButton }}
-                data-testid={`remove-from-wishlist-${item.id}`}
               >
                 Remove
               </button>
@@ -741,60 +692,50 @@ const CouponSection = () => {
   };
 
   return (
-    <div style={styles.cartContainer}>
-      <h2 style={styles.cartHeader}>
-        <span style={styles.icon}>🏷️</span>
-        Discount Coupons
-      </h2>
+    <div className="coupon-section">
+      <h2>Discount Coupons</h2>
 
-      <div style={styles.couponSection}>
-        <div style={styles.couponInputGroup}>
-          <input
-            type="text"
-            value={couponInput}
-            onChange={(e) => setCouponInput(e.target.value)}
-            placeholder="Enter coupon code"
-            style={styles.couponInput}
-          />
+      <div className="input-group mb-4">
+        <input
+          type="text"
+          className="form-control"
+          value={couponInput}
+          onChange={(e) => setCouponInput(e.target.value)}
+          placeholder="Enter coupon code"
+        />
+        <div className="input-group-append">
           <button
+            className="btn btn-success"
             onClick={handleApplyCoupon}
             disabled={!couponInput.trim() || state.cart.length === 0}
-            style={{
-              ...styles.couponApplyButton,
-              ...(!couponInput.trim() || state.cart.length === 0 ? styles.couponApplyButtonDisabled : {})
-            }}
           >
             Apply
           </button>
         </div>
-        
-        {state.appliedCoupon && (
-          <div style={styles.couponNotification}>
-            <span style={styles.couponNotificationText}>
-              {state.appliedCoupon.code} applied! {state.appliedCoupon.description}
-            </span>
-            <button
-              onClick={removeCoupon}
-              style={styles.couponRemoveButton}
-            >
-              ✕
-            </button>
-          </div>
-        )}
       </div>
-
-      <div style={styles.availableCoupons}>
-        <h3 style={styles.availableCouponsTitle}>Available Coupons:</h3>
-        <div>
-          {state.coupons.map((coupon, index) => (
-            <div key={index} style={styles.couponCard}>
-              <div style={styles.couponCardContent}>
-                <span style={styles.couponCode}>{coupon.code}</span>
-                <span style={styles.couponDescription}>{coupon.description}</span>
-              </div>
-            </div>
-          ))}
+      
+      {state.appliedCoupon && (
+        <div className="alert alert-success">
+          <span>
+            {state.appliedCoupon.code} applied! {state.appliedCoupon.description}
+          </span>
+          <button
+            className="btn-close"
+            onClick={removeCoupon}
+            style={{ float: 'right' }}
+          >
+            ✕
+          </button>
         </div>
+      )}
+
+      <div>
+        <h4>Available Coupons:</h4>
+        {state.coupons.map((coupon, index) => (
+          <div key={index} className="alert alert-info">
+            <strong>{coupon.code}</strong> - {coupon.description}
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -806,55 +747,67 @@ const ShoppingCartApp = () => {
   const { state } = useCart();
 
   return (
-    <div style={styles.container}>
-      <div style={styles.wrapper}>
-        <header style={styles.header}>
-          <h1 style={styles.title}>Shopping Cart Redux</h1>
-          <p style={styles.subtitle}>Complete shopping experience with Redux state management</p>
-        </header>
-
-        <nav style={styles.nav}>
-          <div style={styles.navContainer}>
-            {[
-              { id: 'products', label: 'Products', count: products.length },
-              { id: 'cart', label: 'Cart', count: state.cart.length },
-              { id: 'wishlist', label: 'Wishlist', count: state.wishlist.length },
-              { id: 'coupons', label: 'Coupons', count: state.coupons.length }
-            ].map((tab, index) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                style={{
-                  ...styles.navButton,
-                  ...(activeTab === tab.id ? styles.navButtonActive : styles.navButtonInactive),
-                  marginRight: index === 3 ? '0' : '4px'
-                }}
-              >
-                {tab.label} ({tab.count})
-              </button>
-            ))}
+    <>
+      <style>{styles}</style>
+      <div>
+        <nav className="navbar-expand-lg">
+          <div className="container">
+            <h1 className="text-center">Shopping Cart Redux</h1>
           </div>
         </nav>
 
-        <main>
-          {activeTab === 'products' && (
-            <div style={styles.productGrid}>
-              {products.map(product => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
+        <div className="container">
+          <ul className="nav nav-tabs">
+            <li className="nav-item">
+              <button
+                className={`nav-link ${activeTab === 'products' ? 'active' : ''}`}
+                onClick={() => setActiveTab('products')}
+              >
+                Products ({products.length})
+              </button>
+            </li>
+            <li className="nav-item">
+              <button
+                className={`nav-link ${activeTab === 'cart' ? 'active' : ''}`}
+                onClick={() => setActiveTab('cart')}
+              >
+                Cart ({state.cart.length})
+              </button>
+            </li>
+            <li className="nav-item">
+              <button
+                className={`nav-link ${activeTab === 'wishlist' ? 'active' : ''}`}
+                onClick={() => setActiveTab('wishlist')}
+              >
+                Wishlist ({state.wishlist.length})
+              </button>
+            </li>
+            <li className="nav-item">
+              <button
+                className={`nav-link ${activeTab === 'coupons' ? 'active' : ''}`}
+                onClick={() => setActiveTab('coupons')}
+              >
+                Coupons ({state.coupons.length})
+              </button>
+            </li>
+          </ul>
 
-          {activeTab === 'cart' && <Cart />}
-          {activeTab === 'wishlist' && <Wishlist />}
-          {activeTab === 'coupons' && <CouponSection />}
-        </main>
+          <div className="mt-4">
+            {activeTab === 'products' && (
+              <div className="row">
+                {products.map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
 
-        <footer style={styles.footer}>
-          <p>Built with React & Redux • Complete cart management system</p>
-        </footer>
+            {activeTab === 'cart' && <Cart />}
+            {activeTab === 'wishlist' && <Wishlist />}
+            {activeTab === 'coupons' && <CouponSection />}
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
