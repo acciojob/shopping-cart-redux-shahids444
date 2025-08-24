@@ -196,40 +196,36 @@ const ProductCard = ({ product }) => {
   const isInWishlist = wishlist.some(item => item.id === product.id);
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 border hover:shadow-lg transition-shadow">
-      <div className="text-center mb-3">
-        <div className="text-4xl mb-2">{product.image}</div>
-        <h3 className="font-semibold text-lg text-gray-800">{product.name}</h3>
-        <p className="text-sm text-gray-600">{product.category}</p>
-        <p className="text-xl font-bold text-blue-600">${product.price}</p>
-      </div>
-      
-      <div className="flex gap-2">
-        <button
-          onClick={() => dispatch(addToCart(product))}
-          className={`flex-1 px-3 py-2 rounded text-sm font-medium transition-colors ${
-            isInCart
-              ? 'bg-green-100 text-green-700 border border-green-300'
-              : 'bg-blue-500 text-white hover:bg-blue-600'
-          }`}
-        >
-          {isInCart ? '✓ In Cart' : '🛒 Add to Cart'}
-        </button>
+    <div className="custom-card card">
+      <div className="card-body">
+        <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>{product.image}</div>
+          <h5 className="card-title">{product.name}</h5>
+          <p className="card-text" style={{ fontSize: '0.875rem', color: '#666' }}>{product.category}</p>
+          <p className="card-text" style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#007bff' }}>${product.price}</p>
+        </div>
         
-        <button
-          onClick={() => 
-            isInWishlist 
-              ? dispatch(removeFromWishlist(product.id))
-              : dispatch(addToWishlist(product))
-          }
-          className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-            isInWishlist
-              ? 'bg-red-100 text-red-600 border border-red-300'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
-        >
-          {isInWishlist ? '💔' : '💖'}
-        </button>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button
+            onClick={() => dispatch(addToCart(product))}
+            className={`btn ${isInCart ? 'btn-success' : 'btn-primary'}`}
+            style={{ flex: 1, fontSize: '0.875rem' }}
+          >
+            {isInCart ? '✓ In Cart' : '🛒 Add to Cart'}
+          </button>
+          
+          <button
+            onClick={() => 
+              isInWishlist 
+                ? dispatch(removeFromWishlist(product.id))
+                : dispatch(addToWishlist(product))
+            }
+            className="btn btn-outline-secondary"
+            style={{ fontSize: '0.875rem' }}
+          >
+            {isInWishlist ? '💔' : '💖'}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -240,35 +236,40 @@ const CartItem = ({ item }) => {
   const { dispatch } = useShopping();
 
   return (
-    <div className="flex items-center gap-4 p-4 bg-white rounded-lg shadow border">
-      <div className="text-2xl">{item.image}</div>
-      <div className="flex-1">
-        <h4 className="font-semibold">{item.name}</h4>
-        <p className="text-gray-600">${item.price}</p>
-      </div>
-      <div className="flex items-center gap-2">
-        <button
-          onClick={() => dispatch(decreaseQuantity(item.id))}
-          className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center font-bold"
-        >
-          −
-        </button>
-        <span className="w-8 text-center font-medium">{item.quantity}</span>
-        <button
-          onClick={() => dispatch(increaseQuantity(item.id))}
-          className="w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center font-bold"
-        >
-          +
-        </button>
-      </div>
-      <div className="text-right">
-        <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
-        <button
-          onClick={() => dispatch(removeFromCart(item.id))}
-          className="text-red-500 hover:text-red-700 text-sm"
-        >
-          Remove
-        </button>
+    <div className="card mb-3">
+      <div className="card-body" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ fontSize: '2rem' }}>{item.image}</div>
+        <div style={{ flex: 1 }}>
+          <h5 className="card-title">{item.name}</h5>
+          <p className="card-text">${item.price}</p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button
+            onClick={() => dispatch(decreaseQuantity(item.id))}
+            className="btn btn-outline-secondary btn-sm"
+            style={{ width: '2rem', height: '2rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            −
+          </button>
+          <span style={{ minWidth: '2rem', textAlign: 'center', fontWeight: '500' }}>{item.quantity}</span>
+          <button
+            onClick={() => dispatch(increaseQuantity(item.id))}
+            className="btn btn-primary btn-sm"
+            style={{ width: '2rem', height: '2rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            +
+          </button>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <p style={{ fontWeight: 'bold', margin: '0 0 0.5rem 0' }}>${(item.price * item.quantity).toFixed(2)}</p>
+          <button
+            onClick={() => dispatch(removeFromCart(item.id))}
+            className="btn btn-link text-danger btn-sm"
+            style={{ padding: 0, fontSize: '0.875rem' }}
+          >
+            Remove
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -285,37 +286,41 @@ const Cart = () => {
 
   if (cart.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6 text-center">
-        <div className="text-4xl mb-4">🛒</div>
-        <p className="text-gray-600">Your cart is empty</p>
+      <div className="card text-center">
+        <div className="card-body">
+          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🛒</div>
+          <p className="card-text">Your cart is empty</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold mb-4">Shopping Cart ({cart.length})</h2>
-      
-      <div className="space-y-4 mb-6">
-        {cart.map(item => (
-          <CartItem key={item.id} item={item} />
-        ))}
-      </div>
-
-      <div className="border-t pt-4 space-y-2">
-        <div className="flex justify-between">
-          <span>Subtotal:</span>
-          <span>${subtotal.toFixed(2)}</span>
+    <div className="card">
+      <div className="card-body">
+        <h2 className="card-title">Shopping Cart ({cart.length})</h2>
+        
+        <div style={{ marginBottom: '1.5rem' }}>
+          {cart.map(item => (
+            <CartItem key={item.id} item={item} />
+          ))}
         </div>
-        {discount > 0 && (
-          <div className="flex justify-between text-green-600">
-            <span>Discount ({appliedCoupon}):</span>
-            <span>-${discountAmount.toFixed(2)}</span>
+
+        <div style={{ borderTop: '1px solid #dee2e6', paddingTop: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+            <span>Subtotal:</span>
+            <span>${subtotal.toFixed(2)}</span>
           </div>
-        )}
-        <div className="flex justify-between text-xl font-bold border-t pt-2">
-          <span>Total:</span>
-          <span>${total.toFixed(2)}</span>
+          {discount > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: '#28a745' }}>
+              <span>Discount ({appliedCoupon}):</span>
+              <span>-${discountAmount.toFixed(2)}</span>
+            </div>
+          )}
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.25rem', fontWeight: 'bold', borderTop: '1px solid #dee2e6', paddingTop: '0.5rem' }}>
+            <span>Total:</span>
+            <span>${total.toFixed(2)}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -329,40 +334,46 @@ const Wishlist = () => {
 
   if (wishlist.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6 text-center">
-        <div className="text-4xl mb-4">💖</div>
-        <p className="text-gray-600">Your wishlist is empty</p>
+      <div className="card text-center">
+        <div className="card-body">
+          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>💖</div>
+          <p className="card-text">Your wishlist is empty</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold mb-4">Wishlist ({wishlist.length})</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {wishlist.map(product => (
-          <div key={product.id} className="flex items-center gap-4 p-4 border rounded-lg">
-            <div className="text-2xl">{product.image}</div>
-            <div className="flex-1">
-              <h4 className="font-semibold">{product.name}</h4>
-              <p className="text-blue-600 font-bold">${product.price}</p>
+    <div className="card">
+      <div className="card-body">
+        <h2 className="card-title">Wishlist ({wishlist.length})</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
+          {wishlist.map(product => (
+            <div key={product.id} className="card">
+              <div className="card-body" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ fontSize: '2rem' }}>{product.image}</div>
+                <div style={{ flex: 1 }}>
+                  <h5 className="card-title">{product.name}</h5>
+                  <p className="card-text" style={{ color: '#007bff', fontWeight: 'bold' }}>${product.price}</p>
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    onClick={() => dispatch(addToCart(product))}
+                    className="btn btn-primary btn-sm"
+                  >
+                    Add to Cart
+                  </button>
+                  <button
+                    onClick={() => dispatch(removeFromWishlist(product.id))}
+                    className="btn btn-danger btn-sm"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => dispatch(addToCart(product))}
-                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
-              >
-                Add to Cart
-              </button>
-              <button
-                onClick={() => dispatch(removeFromWishlist(product.id))}
-                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
-              >
-                Remove
-              </button>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -394,60 +405,96 @@ const CouponSection = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold mb-4">Discount Coupons</h2>
-      
-      {appliedCoupon && (
-        <div className="mb-4 p-3 bg-green-100 border border-green-300 rounded">
-          <div className="flex justify-between items-center">
-            <span className="text-green-700">
-              Active: {appliedCoupon} ({discount}% off)
-            </span>
+    <div className="card">
+      <div className="card-body">
+        <h2 className="card-title">Discount Coupons</h2>
+        
+        {appliedCoupon && (
+          <div className="alert alert-success" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>Active: {appliedCoupon} ({discount}% off)</span>
             <button
               onClick={handleClearCoupon}
-              className="text-red-500 hover:text-red-700 text-sm"
+              className="btn btn-link text-danger btn-sm"
+              style={{ padding: 0 }}
             >
               Remove
             </button>
           </div>
+        )}
+
+        <div className="input-group mb-3">
+          <input
+            type="text"
+            value={couponInput}
+            onChange={(e) => setCouponInput(e.target.value)}
+            placeholder="Enter coupon code"
+            className="form-control"
+          />
+          <button
+            onClick={handleApplyCoupon}
+            className="btn btn-primary"
+          >
+            Apply
+          </button>
         </div>
-      )}
 
-      <div className="flex gap-2 mb-4">
-        <input
-          type="text"
-          value={couponInput}
-          onChange={(e) => setCouponInput(e.target.value)}
-          placeholder="Enter coupon code"
-          className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-        />
-        <button
-          onClick={handleApplyCoupon}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Apply
-        </button>
-      </div>
+        {message && (
+          <div className={`alert ${message.includes('✅') ? 'alert-success' : 'alert-danger'}`}>
+            {message}
+          </div>
+        )}
 
-      {message && (
-        <div className={`mb-4 p-2 rounded text-sm ${
-          message.includes('✅') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-        }`}>
-          {message}
-        </div>
-      )}
-
-      <div className="space-y-2">
-        <h3 className="font-semibold text-gray-700">Available Coupons:</h3>
-        <div className="grid grid-cols-2 gap-2">
-          {Object.entries(coupons).map(([code, discount]) => (
-            <div key={code} className="p-2 bg-gray-100 rounded text-sm text-center">
-              <strong>{code}</strong> - {discount}% off
-            </div>
-          ))}
+        <div>
+          <h5>Available Coupons:</h5>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.5rem' }}>
+            {Object.entries(coupons).map(([code, discount]) => (
+              <div key={code} className="badge bg-secondary" style={{ padding: '0.5rem', textAlign: 'center' }}>
+                <strong>{code}</strong> - {discount}% off
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
+  );
+};
+
+// Navigation Component
+const Navigation = ({ activeTab, setActiveTab, cart, wishlist }) => {
+  return (
+    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <div className="container-fluid">
+        <div className="text-center" style={{ width: '100%' }}>
+          <h1 className="navbar-brand">🛒 Shopping Cart Redux</h1>
+        </div>
+        <div className="navbar-nav">
+          <button
+            onClick={() => setActiveTab('products')}
+            className={`nav-link btn ${activeTab === 'products' ? 'active' : ''}`}
+          >
+            🛍️ Products
+          </button>
+          <button
+            onClick={() => setActiveTab('cart')}
+            className={`nav-link btn ${activeTab === 'cart' ? 'active' : ''}`}
+          >
+            🛒 Cart ({cart.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('wishlist')}
+            className={`nav-link btn ${activeTab === 'wishlist' ? 'active' : ''}`}
+          >
+            💖 Wishlist ({wishlist.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('coupons')}
+            className={`nav-link btn ${activeTab === 'coupons' ? 'active' : ''}`}
+          >
+            🎫 Coupons
+          </button>
+        </div>
+      </div>
+    </nav>
   );
 };
 
@@ -457,46 +504,15 @@ const ShoppingCartApp = () => {
   const { state } = useShopping();
   const { cart, wishlist } = state;
 
-  const tabs = [
-    { id: 'products', label: 'Products', icon: '🛍️' },
-    { id: 'cart', label: `Cart (${cart.length})`, icon: '🛒' },
-    { id: 'wishlist', label: `Wishlist (${wishlist.length})`, icon: '💖' },
-    { id: 'coupons', label: 'Coupons', icon: '🎫' }
-  ];
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <h1 className="text-3xl font-bold text-gray-900">🛒 Shopping Cart Redux</h1>
-        </div>
-      </header>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
+      <Navigation activeTab={activeTab} setActiveTab={setActiveTab} cart={cart} wishlist={wishlist} />
 
-      <nav className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex space-x-1">
-            {tabs.map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-3 font-medium text-sm transition-colors ${
-                  activeTab === tab.id
-                    ? 'border-b-2 border-blue-500 text-blue-600'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                {tab.icon} {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="container" style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
         {activeTab === 'products' && (
           <div>
-            <h2 className="text-2xl font-bold mb-6">Products</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <h2>Products</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
               {sampleProducts.map(product => (
                 <ProductCard key={product.id} product={product} />
               ))}
@@ -516,6 +532,10 @@ const ShoppingCartApp = () => {
 const App = () => {
   return (
     <ShoppingProvider>
+      <link 
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" 
+        rel="stylesheet"
+      />
       <ShoppingCartApp />
     </ShoppingProvider>
   );
