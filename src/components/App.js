@@ -377,6 +377,12 @@ const styles = `
     border-color: #c3e6cb;
   }
 
+  .alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+  }
+
   .btn-close {
     background: none;
     border: none;
@@ -510,17 +516,17 @@ const ProductCard = ({ product }) => {
       <div className="custom-card card">
         <div className="card-body">
           <div className="product-image">{product.image}</div>
-          <h5 className="card-title">{product.name}</h5>
+          <h4 className="card-title">{product.name}</h4>
           <p className="card-text">⭐ {product.rating}</p>
           <div className="product-price">${product.price}</div>
           <button
-            className="btn btn-primary"
+            className="btn btn-primary add-to-cart-btn"
             onClick={() => addToCart(product)}
           >
             {isInCart ? 'In Cart' : 'Add to Cart'}
           </button>
           <button
-            className={`btn ${isInWishlist ? 'btn-danger' : 'btn-outline-secondary'}`}
+            className={`btn ${isInWishlist ? 'btn-danger' : 'btn-outline-secondary'} wishlist-btn`}
             onClick={() => isInWishlist ? removeFromWishlist(product) : addToWishlist(product)}
           >
             {isInWishlist ? '❤️' : '🤍'}
@@ -575,7 +581,7 @@ const Cart = () => {
             
             <div className="quantity-controls">
               <button
-                className="btn btn-sm btn-outline-secondary"
+                className="btn btn-sm btn-outline-secondary decrease-quantity"
                 onClick={() => decreaseQuantity(item)}
                 disabled={item.quantity <= 1}
               >
@@ -583,7 +589,7 @@ const Cart = () => {
               </button>
               <span className="quantity-display">{item.quantity}</span>
               <button
-                className="btn btn-sm btn-outline-secondary"
+                className="btn btn-sm btn-outline-secondary increase-quantity"
                 onClick={() => increaseQuantity(item)}
               >
                 +
@@ -593,7 +599,7 @@ const Cart = () => {
             <div style={{ textAlign: 'right' }}>
               <div><strong>${(item.price * item.quantity).toFixed(2)}</strong></div>
               <button
-                className="btn btn-sm btn-danger"
+                className="btn btn-sm btn-danger remove-from-cart"
                 onClick={() => removeFromCart(item)}
               >
                 🗑️
@@ -653,13 +659,13 @@ const Wishlist = () => {
             </div>
             <div>
               <button
-                className="btn btn-primary"
+                className="btn btn-primary add-to-cart-from-wishlist"
                 onClick={() => addToCart(item)}
               >
                 Add to Cart
               </button>
               <button
-                className="btn btn-danger"
+                className="btn btn-danger remove-from-wishlist"
                 onClick={() => removeFromWishlist(item)}
               >
                 Remove
@@ -698,14 +704,14 @@ const CouponSection = () => {
       <div className="input-group mb-4">
         <input
           type="text"
-          className="form-control"
+          className="form-control coupon-input"
           value={couponInput}
           onChange={(e) => setCouponInput(e.target.value)}
           placeholder="Enter coupon code"
         />
         <div className="input-group-append">
           <button
-            className="btn btn-success"
+            className="btn btn-success apply-coupon"
             onClick={handleApplyCoupon}
             disabled={!couponInput.trim() || state.cart.length === 0}
           >
@@ -720,7 +726,7 @@ const CouponSection = () => {
             {state.appliedCoupon.code} applied! {state.appliedCoupon.description}
           </span>
           <button
-            className="btn-close"
+            className="btn-close remove-coupon"
             onClick={removeCoupon}
             style={{ float: 'right' }}
           >
@@ -751,9 +757,7 @@ const ShoppingCartApp = () => {
       <style>{styles}</style>
       <div>
         <nav className="navbar-expand-lg">
-          <div className="container">
-            <h1 className="text-center">Shopping Cart Redux</h1>
-          </div>
+          <h1 className="text-center">Shopping Cart Redux</h1>
         </nav>
 
         <div className="container">
