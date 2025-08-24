@@ -377,12 +377,6 @@ const styles = `
     border-color: #c3e6cb;
   }
 
-  .alert-info {
-    color: #0c5460;
-    background-color: #d1ecf1;
-    border-color: #bee5eb;
-  }
-
   .btn-close {
     background: none;
     border: none;
@@ -516,17 +510,17 @@ const ProductCard = ({ product }) => {
       <div className="custom-card card">
         <div className="card-body">
           <div className="product-image">{product.image}</div>
-          <h4 className="card-title">{product.name}</h4>
+           <h4 className="card-title">{product.name}</h4> 
           <p className="card-text">⭐ {product.rating}</p>
           <div className="product-price">${product.price}</div>
-          <button
-            className="btn btn-primary add-to-cart-btn"
+         <button
+            className="btn btn-primary add-to-cart-btn"  // Added class
             onClick={() => addToCart(product)}
           >
             {isInCart ? 'In Cart' : 'Add to Cart'}
           </button>
-          <button
-            className={`btn ${isInWishlist ? 'btn-danger' : 'btn-outline-secondary'} wishlist-btn`}
+           <button
+            className={`btn ${isInWishlist ? 'btn-danger' : 'btn-outline-secondary'} wishlist-btn`}  // Added class
             onClick={() => isInWishlist ? removeFromWishlist(product) : addToWishlist(product)}
           >
             {isInWishlist ? '❤️' : '🤍'}
@@ -580,18 +574,18 @@ const Cart = () => {
             </div>
             
             <div className="quantity-controls">
-              <button
-                className="btn btn-sm btn-outline-secondary decrease-quantity"
-                onClick={() => decreaseQuantity(item)}
-                disabled={item.quantity <= 1}
-              >
-                -
+      <button
+        className="btn btn-sm btn-outline-secondary decrease-quantity"  // Added class
+        onClick={() => decreaseQuantity(item)}
+        disabled={item.quantity <= 1}
+      >
+                
               </button>
-              <span className="quantity-display">{item.quantity}</span>
-              <button
-                className="btn btn-sm btn-outline-secondary increase-quantity"
-                onClick={() => increaseQuantity(item)}
-              >
+               <span className="quantity-display">{item.quantity}</span>
+      <button
+        className="btn btn-sm btn-outline-secondary increase-quantity"  // Added class
+        onClick={() => increaseQuantity(item)}
+      >
                 +
               </button>
             </div>
@@ -599,7 +593,7 @@ const Cart = () => {
             <div style={{ textAlign: 'right' }}>
               <div><strong>${(item.price * item.quantity).toFixed(2)}</strong></div>
               <button
-                className="btn btn-sm btn-danger remove-from-cart"
+                className="btn btn-sm btn-danger"
                 onClick={() => removeFromCart(item)}
               >
                 🗑️
@@ -659,13 +653,13 @@ const Wishlist = () => {
             </div>
             <div>
               <button
-                className="btn btn-primary add-to-cart-from-wishlist"
+                className="btn btn-primary"
                 onClick={() => addToCart(item)}
               >
                 Add to Cart
               </button>
               <button
-                className="btn btn-danger remove-from-wishlist"
+                className="btn btn-danger"
                 onClick={() => removeFromWishlist(item)}
               >
                 Remove
@@ -704,14 +698,14 @@ const CouponSection = () => {
       <div className="input-group mb-4">
         <input
           type="text"
-          className="form-control coupon-input"
+          className="form-control"
           value={couponInput}
           onChange={(e) => setCouponInput(e.target.value)}
           placeholder="Enter coupon code"
         />
         <div className="input-group-append">
           <button
-            className="btn btn-success apply-coupon"
+            className="btn btn-success"
             onClick={handleApplyCoupon}
             disabled={!couponInput.trim() || state.cart.length === 0}
           >
@@ -726,7 +720,7 @@ const CouponSection = () => {
             {state.appliedCoupon.code} applied! {state.appliedCoupon.description}
           </span>
           <button
-            className="btn-close remove-coupon"
+            className="btn-close"
             onClick={removeCoupon}
             style={{ float: 'right' }}
           >
@@ -757,7 +751,7 @@ const ShoppingCartApp = () => {
       <style>{styles}</style>
       <div>
         <nav className="navbar-expand-lg">
-          <h1 className="text-center">Shopping Cart Redux</h1>
+          <h1 className="text-center">Shopping Cart Redux</h1>  {/* Removed container div */}
         </nav>
 
         <div className="container">
