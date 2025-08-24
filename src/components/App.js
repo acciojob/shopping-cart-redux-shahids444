@@ -1,73 +1,70 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { useState, useReducer } from 'react';
 
-// Action Types
-const ADD_TO_CART = 'ADD_TO_CART';
-const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
-const INCREASE_QUANTITY = 'INCREASE_QUANTITY';
-const DECREASE_QUANTITY = 'DECREASE_QUANTITY';
-const ADD_TO_WISHLIST = 'ADD_TO_WISHLIST';
-const REMOVE_FROM_WISHLIST = 'REMOVE_FROM_WISHLIST';
-const APPLY_DISCOUNT = 'APPLY_DISCOUNT';
-const CLEAR_DISCOUNT = 'CLEAR_DISCOUNT';
-
-// Action Creators
-const addToCart = (product) => ({
-  type: ADD_TO_CART,
-  payload: product
-});
-
-const removeFromCart = (productId) => ({
-  type: REMOVE_FROM_CART,
-  payload: productId
-});
-
-const increaseQuantity = (productId) => ({
-  type: INCREASE_QUANTITY,
-  payload: productId
-});
-
-const decreaseQuantity = (productId) => ({
-  type: DECREASE_QUANTITY,
-  payload: productId
-});
-
-const addToWishlist = (product) => ({
-  type: ADD_TO_WISHLIST,
-  payload: product
-});
-
-const removeFromWishlist = (productId) => ({
-  type: REMOVE_FROM_WISHLIST,
-  payload: productId
-});
-
-const applyDiscount = (couponCode) => ({
-  type: APPLY_DISCOUNT,
-  payload: couponCode
-});
-
-const clearDiscount = () => ({
-  type: CLEAR_DISCOUNT
-});
-
-// Initial State
+// Initial state
 const initialState = {
+  products: [
+    {
+      id: 1,
+      name: "Wireless Headphones",
+      price: 99.99,
+      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop"
+    },
+    {
+      id: 2,
+      name: "Smart Watch",
+      price: 199.99,
+      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=200&fit=crop"
+    },
+    {
+      id: 3,
+      name: "Bluetooth Speaker",
+      price: 79.99,
+      image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=300&h=200&fit=crop"
+    },
+    {
+      id: 4,
+      name: "Laptop Stand",
+      price: 49.99,
+      image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=300&h=200&fit=crop"
+    },
+    {
+      id: 5,
+      name: "USB-C Hub",
+      price: 39.99,
+      image: "https://images.unsplash.com/photo-1625842268584-8f3296236761?w=300&h=200&fit=crop"
+    },
+    {
+      id: 6,
+      name: "Wireless Mouse",
+      price: 29.99,
+      image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=300&h=200&fit=crop"
+    }
+  ],
   cart: [],
   wishlist: [],
-  discount: 0,
+  couponCode: '',
   appliedCoupon: null,
-  coupons: {
-    'SAVE10': 10,
-    'SAVE20': 20,
-    'WELCOME5': 5,
-    'MEGA25': 25
-  }
+  discountPercentage: 0,
+  activeTab: 'products'
 };
 
-// Reducer Function
+// Action types
+const actionTypes = {
+  ADD_TO_CART: 'ADD_TO_CART',
+  REMOVE_FROM_CART: 'REMOVE_FROM_CART',
+  UPDATE_QUANTITY: 'UPDATE_QUANTITY',
+  ADD_TO_WISHLIST: 'ADD_TO_WISHLIST',
+  REMOVE_FROM_WISHLIST: 'REMOVE_FROM_WISHLIST',
+  MOVE_TO_CART: 'MOVE_TO_CART',
+  APPLY_COUPON: 'APPLY_COUPON',
+  REMOVE_COUPON: 'REMOVE_COUPON',
+  SET_ACTIVE_TAB: 'SET_ACTIVE_TAB'
+};
+
+// Reducer function
 const shoppingReducer = (state, action) => {
   switch (action.type) {
-    case ADD_TO_CART: {
+    case actionTypes.ADD_TO_CART:
       const existingItem = state.cart.find(item => item.id === action.payload.id);
       if (existingItem) {
         return {
@@ -78,75 +75,78 @@ const shoppingReducer = (state, action) => {
               : item
           )
         };
-      } else {
-        return {
-          ...state,
-          cart: [...state.cart, { ...action.payload, quantity: 1 }]
-        };
       }
-    }
+      return {
+        ...state,
+        cart: [...state.cart, { ...action.payload, quantity: 1 }]
+      };
 
-    case REMOVE_FROM_CART:
+    case actionTypes.REMOVE_FROM_CART:
       return {
         ...state,
         cart: state.cart.filter(item => item.id !== action.payload)
       };
 
-    case INCREASE_QUANTITY:
+    case actionTypes.UPDATE_QUANTITY:
       return {
         ...state,
         cart: state.cart.map(item =>
-          item.id === action.payload
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      };
-
-    case DECREASE_QUANTITY:
-      return {
-        ...state,
-        cart: state.cart.map(item =>
-          item.id === action.payload
-            ? { ...item, quantity: Math.max(0, item.quantity - 1) }
+          item.id === action.payload.id
+            ? { ...item, quantity: Math.max(0, action.payload.quantity) }
             : item
         ).filter(item => item.quantity > 0)
       };
 
-    case ADD_TO_WISHLIST: {
-      const alreadyExists = state.wishlist.find(item => item.id === action.payload.id);
-      if (alreadyExists) {
+    case actionTypes.ADD_TO_WISHLIST:
+      if (state.wishlist.find(item => item.id === action.payload.id)) {
         return state;
       }
       return {
         ...state,
         wishlist: [...state.wishlist, action.payload]
       };
-    }
 
-    case REMOVE_FROM_WISHLIST:
+    case actionTypes.REMOVE_FROM_WISHLIST:
       return {
         ...state,
         wishlist: state.wishlist.filter(item => item.id !== action.payload)
       };
 
-    case APPLY_DISCOUNT: {
-      const couponCode = action.payload.toUpperCase();
-      const discountValue = state.coupons[couponCode];
-      if (discountValue) {
+    case actionTypes.MOVE_TO_CART:
+      const wishlistItem = state.wishlist.find(item => item.id === action.payload);
+      return {
+        ...state,
+        wishlist: state.wishlist.filter(item => item.id !== action.payload),
+        cart: [...state.cart, { ...wishlistItem, quantity: 1 }]
+      };
+
+    case actionTypes.APPLY_COUPON:
+      const validCoupons = {
+        'SAVE10': 10,
+        'SAVE20': 20,
+        'WELCOME15': 15
+      };
+      
+      if (validCoupons[action.payload]) {
         return {
           ...state,
-          discount: discountValue,
-          appliedCoupon: couponCode
+          appliedCoupon: action.payload,
+          discountPercentage: validCoupons[action.payload]
         };
       }
       return state;
-    }
 
-    case CLEAR_DISCOUNT:
+    case actionTypes.REMOVE_COUPON:
       return {
         ...state,
-        discount: 0,
-        appliedCoupon: null
+        appliedCoupon: null,
+        discountPercentage: 0
+      };
+
+    case actionTypes.SET_ACTIVE_TAB:
+      return {
+        ...state,
+        activeTab: action.payload
       };
 
     default:
@@ -154,391 +154,522 @@ const shoppingReducer = (state, action) => {
   }
 };
 
-// Create Context for State Management
-const ShoppingContext = createContext();
-
-// Provider Component
-const ShoppingProvider = ({ children }) => {
+const ShoppingCart = () => {
   const [state, dispatch] = useReducer(shoppingReducer, initialState);
-  
-  return (
-    <ShoppingContext.Provider value={{ state, dispatch }}>
-      {children}
-    </ShoppingContext.Provider>
-  );
-};
+  const [couponInput, setCouponInput] = useState('');
 
-// Custom Hook to use Shopping Context
-const useShopping = () => {
-  const context = useContext(ShoppingContext);
-  if (!context) {
-    throw new Error('useShopping must be used within a ShoppingProvider');
-  }
-  return context;
-};
-
-// Sample Products Data
-const sampleProducts = [
-  { id: 1, name: 'Laptop', price: 999.99, image: '💻', category: 'Electronics' },
-  { id: 2, name: 'Smartphone', price: 599.99, image: '📱', category: 'Electronics' },
-  { id: 3, name: 'Headphones', price: 199.99, image: '🎧', category: 'Electronics' },
-  { id: 4, name: 'Coffee Maker', price: 89.99, image: '☕', category: 'Appliances' },
-  { id: 5, name: 'Book', price: 24.99, image: '📚', category: 'Books' },
-  { id: 6, name: 'T-Shirt', price: 19.99, image: '👕', category: 'Clothing' }
-];
-
-// Product Card Component
-const ProductCard = ({ product }) => {
-  const { state, dispatch } = useShopping();
-  const { cart, wishlist } = state;
-  
-  const isInCart = cart.some(item => item.id === product.id);
-  const isInWishlist = wishlist.some(item => item.id === product.id);
-
-  return (
-      <div className="custom-card card">
-      <div className="card-body">
-        <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>{product.image}</div>
-          <h4 className="card-title">{product.name}</h4> {/* Changed from h5 to h4 */}
-          <p className="card-text" style={{ fontSize: '0.875rem', color: '#666' }}>{product.category}</p>
-          <p className="card-text" style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#007bff' }}>${product.price}</p>
-        </div>
-        
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button
-            onClick={() => dispatch(addToCart(product))}
-            className={`btn ${isInCart ? 'btn-success' : 'btn-primary'}`}
-            style={{ flex: 1, fontSize: '0.875rem' }}
-          >
-            {isInCart ? '✓ In Cart' : '🛒 Add to Cart'}
-          </button>
-          
-          <button
-            onClick={() => 
-              isInWishlist 
-                ? dispatch(removeFromWishlist(product.id))
-                : dispatch(addToWishlist(product))
-            }
-            className="btn btn-outline-secondary"
-            style={{ fontSize: '0.875rem' }}
-          >
-            {isInWishlist ? '💔' : '💖'}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-
-// Cart Item Component
-const CartItem = ({ item }) => {
-  const { dispatch } = useShopping();
-
-  return (
-    <div className="card mb-3">
-      <div className="card-body" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <div style={{ fontSize: '2rem' }}>{item.image}</div>
-        <div style={{ flex: 1 }}>
-          <h5 className="card-title">{item.name}</h5>
-          <p className="card-text">${item.price}</p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <button
-            onClick={() => dispatch(decreaseQuantity(item.id))}
-            className="btn btn-outline-secondary btn-sm"
-            style={{ width: '2rem', height: '2rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          >
-            −
-          </button>
-          <span style={{ minWidth: '2rem', textAlign: 'center', fontWeight: '500' }}>{item.quantity}</span>
-          <button
-            onClick={() => dispatch(increaseQuantity(item.id))}
-            className="btn btn-primary btn-sm"
-            style={{ width: '2rem', height: '2rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          >
-            +
-          </button>
-        </div>
-        <div style={{ textAlign: 'right' }}>
-          <p style={{ fontWeight: 'bold', margin: '0 0 0.5rem 0' }}>${(item.price * item.quantity).toFixed(2)}</p>
-          <button
-            onClick={() => dispatch(removeFromCart(item.id))}
-            className="btn btn-link text-danger btn-sm"
-            style={{ padding: 0, fontSize: '0.875rem' }}
-          >
-            Remove
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Cart Component
-const Cart = () => {
-  const { state } = useShopping();
-  const { cart, discount, appliedCoupon } = state;
-  
-  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const discountAmount = (subtotal * discount) / 100;
+  // Calculate totals
+  const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const discountAmount = (subtotal * state.discountPercentage) / 100;
   const total = subtotal - discountAmount;
 
-  if (cart.length === 0) {
-    return (
-      <div className="card text-center">
-        <div className="card-body">
-          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🛒</div>
-          <p className="card-text">Your cart is empty</p>
-        </div>
-      </div>
-    );
-  }
+  const handleAddToCart = (product) => {
+    dispatch({ type: actionTypes.ADD_TO_CART, payload: product });
+  };
 
-  return (
-    <div className="card">
-      <div className="card-body">
-        <h2 className="card-title">Shopping Cart ({cart.length})</h2>
-        
-        <div style={{ marginBottom: '1.5rem' }}>
-          {cart.map(item => (
-            <CartItem key={item.id} item={item} />
-          ))}
-        </div>
+  const handleRemoveFromCart = (productId) => {
+    dispatch({ type: actionTypes.REMOVE_FROM_CART, payload: productId });
+  };
 
-        <div style={{ borderTop: '1px solid #dee2e6', paddingTop: '1rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-            <span>Subtotal:</span>
-            <span>${subtotal.toFixed(2)}</span>
-          </div>
-          {discount > 0 && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: '#28a745' }}>
-              <span>Discount ({appliedCoupon}):</span>
-              <span>-${discountAmount.toFixed(2)}</span>
-            </div>
-          )}
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.25rem', fontWeight: 'bold', borderTop: '1px solid #dee2e6', paddingTop: '0.5rem' }}>
-            <span>Total:</span>
-            <span>${total.toFixed(2)}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+  const handleUpdateQuantity = (productId, newQuantity) => {
+    dispatch({ 
+      type: actionTypes.UPDATE_QUANTITY, 
+      payload: { id: productId, quantity: newQuantity } 
+    });
+  };
 
-// Wishlist Component
-const Wishlist = () => {
-  const { state, dispatch } = useShopping();
-  const { wishlist } = state;
+  const handleAddToWishlist = (product) => {
+    dispatch({ type: actionTypes.ADD_TO_WISHLIST, payload: product });
+  };
 
-  if (wishlist.length === 0) {
-    return (
-      <div className="card text-center">
-        <div className="card-body">
-          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>💖</div>
-          <p className="card-text">Your wishlist is empty</p>
-        </div>
-      </div>
-    );
-  }
+  const handleRemoveFromWishlist = (productId) => {
+    dispatch({ type: actionTypes.REMOVE_FROM_WISHLIST, payload: productId });
+  };
 
-  return (
-    <div className="card">
-      <div className="card-body">
-        <h2 className="card-title">Wishlist ({wishlist.length})</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
-          {wishlist.map(product => (
-            <div key={product.id} className="card">
-              <div className="card-body" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ fontSize: '2rem' }}>{product.image}</div>
-                <div style={{ flex: 1 }}>
-                  <h5 className="card-title">{product.name}</h5>
-                  <p className="card-text" style={{ color: '#007bff', fontWeight: 'bold' }}>${product.price}</p>
-                </div>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <button
-                    onClick={() => dispatch(addToCart(product))}
-                    className="btn btn-primary btn-sm"
-                  >
-                    Add to Cart
-                  </button>
-                  <button
-                    onClick={() => dispatch(removeFromWishlist(product.id))}
-                    className="btn btn-danger btn-sm"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Coupon Component
-const CouponSection = () => {
-  const { state, dispatch } = useShopping();
-  const { coupons, appliedCoupon, discount } = state;
-  const [couponInput, setCouponInput] = React.useState('');
-  const [message, setMessage] = React.useState('');
+  const handleMoveToCart = (productId) => {
+    dispatch({ type: actionTypes.MOVE_TO_CART, payload: productId });
+  };
 
   const handleApplyCoupon = () => {
-    const upperCoupon = couponInput.toUpperCase();
-    if (coupons[upperCoupon]) {
-      dispatch(applyDiscount(upperCoupon));
-      setMessage(`✅ Coupon applied! ${coupons[upperCoupon]}% discount`);
+    if (couponInput.trim()) {
+      dispatch({ type: actionTypes.APPLY_COUPON, payload: couponInput.toUpperCase() });
       setCouponInput('');
-    } else {
-      setMessage('❌ Invalid coupon code');
     }
-    setTimeout(() => setMessage(''), 3000);
   };
 
-  const handleClearCoupon = () => {
-    dispatch(clearDiscount());
-    setMessage('Coupon removed');
-    setTimeout(() => setMessage(''), 3000);
+  const handleRemoveCoupon = () => {
+    dispatch({ type: actionTypes.REMOVE_COUPON });
+  };
+
+  const setActiveTab = (tab) => {
+    dispatch({ type: actionTypes.SET_ACTIVE_TAB, payload: tab });
   };
 
   return (
-    <div className="card">
-      <div className="card-body">
-        <h2 className="card-title">Discount Coupons</h2>
-        
-        {appliedCoupon && (
-          <div className="alert alert-success" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>Active: {appliedCoupon} ({discount}% off)</span>
+    <div style={{
+      margin: 0,
+      padding: 0,
+      boxSizing: 'border-box',
+      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+      backgroundColor: '#f5f5f5',
+      color: '#333',
+      lineHeight: 1.6,
+      minHeight: '100vh'
+    }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+        {/* Header */}
+        <header style={{
+          backgroundColor: '#282c34',
+          color: 'white',
+          padding: '1rem',
+          marginBottom: '2rem',
+          borderRadius: '8px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <h1 style={{ fontSize: '1.8rem' }}>Shopping Cart - Redux Assignment</h1>
+          <div style={{ display: 'flex', gap: '1rem' }}>
             <button
-              onClick={handleClearCoupon}
-              className="btn btn-link text-danger btn-sm"
-              style={{ padding: 0 }}
+              onClick={() => setActiveTab('products')}
+              style={{
+                backgroundColor: state.activeTab === 'products' ? '#4fa8c5' : '#61dafb',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                color: '#282c34'
+              }}
             >
-              Remove
+              Products
+            </button>
+            <button
+              onClick={() => setActiveTab('cart')}
+              style={{
+                backgroundColor: state.activeTab === 'cart' ? '#4fa8c5' : '#61dafb',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                color: '#282c34'
+              }}
+            >
+              Cart ({state.cart.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('wishlist')}
+              style={{
+                backgroundColor: state.activeTab === 'wishlist' ? '#4fa8c5' : '#61dafb',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                color: '#282c34'
+              }}
+            >
+              Wishlist ({state.wishlist.length})
             </button>
           </div>
-        )}
+        </header>
 
-        <div className="input-group mb-3">
-          <input
-            type="text"
-            value={couponInput}
-            onChange={(e) => setCouponInput(e.target.value)}
-            placeholder="Enter coupon code"
-            className="form-control"
-          />
-          <button
-            onClick={handleApplyCoupon}
-            className="btn btn-primary"
-          >
-            Apply
-          </button>
-        </div>
-
-        {message && (
-          <div className={`alert ${message.includes('✅') ? 'alert-success' : 'alert-danger'}`}>
-            {message}
-          </div>
-        )}
-
-        <div>
-          <h5>Available Coupons:</h5>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.5rem' }}>
-            {Object.entries(coupons).map(([code, discount]) => (
-              <div key={code} className="badge bg-secondary" style={{ padding: '0.5rem', textAlign: 'center' }}>
-                <strong>{code}</strong> - {discount}% off
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Navigation Component
-const Navigation = ({ activeTab, setActiveTab, cart, wishlist }) => {
-  return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <div className="container">
-        <div className="text-center w-100">
-          <h1 className="navbar-brand mb-0">🛒 Shopping Cart Redux</h1>
-        </div>
-        <div className="d-flex">
-          <button
-            onClick={() => setActiveTab('products')}
-            className={`btn ${activeTab === 'products' ? 'btn-primary' : 'btn-outline-primary'} me-2`}
-          >
-            🛍️ Products
-          </button>
-          <button
-            onClick={() => setActiveTab('cart')}
-            className={`btn ${activeTab === 'cart' ? 'btn-primary' : 'btn-outline-primary'} me-2`}
-          >
-            🛒 Cart ({cart.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('wishlist')}
-            className={`btn ${activeTab === 'wishlist' ? 'btn-primary' : 'btn-outline-primary'} me-2`}
-          >
-            💖 Wishlist ({wishlist.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('coupons')}
-            className={`btn ${activeTab === 'coupons' ? 'btn-primary' : 'btn-outline-primary'}`}
-          >
-            🎫 Coupons
-          </button>
-        </div>
-      </div>
-    </nav>
-  );
-};
-// Main App Component
-const ShoppingCartApp = () => {
-  const [activeTab, setActiveTab] = React.useState('products');
-  const { state } = useShopping();
-  const { cart, wishlist } = state;
-
-  return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
-      <Navigation activeTab={activeTab} setActiveTab={setActiveTab} cart={cart} wishlist={wishlist} />
-
-      <main className="container" style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
-        {activeTab === 'products' && (
-          <div>
-            <h2>Products</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
-              {sampleProducts.map(product => (
-                <ProductCard key={product.id} product={product} />
+        {/* Content */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: window.innerWidth > 768 ? '2fr 1fr' : '1fr',
+          gap: '2rem'
+        }}>
+          {/* Products Tab */}
+          {state.activeTab === 'products' && (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+              gap: '1.5rem',
+              gridColumn: window.innerWidth > 768 ? '1 / -1' : '1'
+            }}>
+              {state.products.map(product => (
+                <div
+                  key={product.id}
+                  style={{
+                    background: 'white',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                    transition: 'transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.transform = 'translateY(-5px)'}
+                  onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+                >
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    style={{
+                      width: '100%',
+                      height: '200px',
+                      objectFit: 'cover'
+                    }}
+                  />
+                  <div style={{ padding: '1rem' }}>
+                    <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>
+                      {product.name}
+                    </h3>
+                    <p style={{
+                      fontWeight: 'bold',
+                      color: '#e91e63',
+                      marginBottom: '1rem'
+                    }}>
+                      ${product.price.toFixed(2)}
+                    </p>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between'
+                    }}>
+                      <button
+                        onClick={() => handleAddToCart(product)}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontWeight: 'bold',
+                          backgroundColor: '#4caf50',
+                          color: 'white'
+                        }}
+                      >
+                        Add to Cart
+                      </button>
+                      <button
+                        onClick={() => handleAddToWishlist(product)}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontWeight: 'bold',
+                          backgroundColor: '#ff9800',
+                          color: 'white'
+                        }}
+                      >
+                        Wishlist
+                      </button>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
-          </div>
-        )}
+          )}
 
-        {activeTab === 'cart' && <Cart />}
-        {activeTab === 'wishlist' && <Wishlist />}
-        {activeTab === 'coupons' && <CouponSection />}
-      </main>
+          {/* Cart Tab */}
+          {state.activeTab === 'cart' && (
+            <>
+              <div>
+                <div style={{
+                  background: 'white',
+                  borderRadius: '8px',
+                  padding: '1.5rem',
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+                }}>
+                  <h2>Shopping Cart</h2>
+                  {state.cart.length === 0 ? (
+                    <div style={{
+                      textAlign: 'center',
+                      padding: '2rem',
+                      color: '#777'
+                    }}>
+                      Your cart is empty
+                    </div>
+                  ) : (
+                    state.cart.map(item => (
+                      <div
+                        key={item.id}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '1rem 0',
+                          borderBottom: '1px solid #eee'
+                        }}
+                      >
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '1rem'
+                        }}>
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            style={{
+                              width: '60px',
+                              height: '60px',
+                              objectFit: 'cover',
+                              borderRadius: '4px'
+                            }}
+                          />
+                          <div>
+                            <h4>{item.name}</h4>
+                            <p>${item.price.toFixed(2)}</p>
+                          </div>
+                        </div>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '1rem'
+                        }}>
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem'
+                          }}>
+                            <button
+                              onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                              style={{
+                                width: '30px',
+                                height: '30px',
+                                borderRadius: '50%',
+                                border: '1px solid #ddd',
+                                background: 'white',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              -
+                            </button>
+                            <span>{item.quantity}</span>
+                            <button
+                              onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                              style={{
+                                width: '30px',
+                                height: '30px',
+                                borderRadius: '50%',
+                                border: '1px solid #ddd',
+                                background: 'white',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              +
+                            </button>
+                          </div>
+                          <button
+                            onClick={() => handleRemoveFromCart(item.id)}
+                            style={{
+                              backgroundColor: '#f44336',
+                              color: 'white',
+                              border: 'none',
+                              padding: '0.3rem 0.7rem',
+                              borderRadius: '4px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Cart Summary */}
+              <div style={{
+                background: 'white',
+                borderRadius: '8px',
+                padding: '1.5rem',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+              }}>
+                <h3>Order Summary</h3>
+                
+                {/* Coupon Section */}
+                <div style={{
+                  marginTop: '1.5rem',
+                  paddingTop: '1.5rem',
+                  borderTop: '1px solid #eee'
+                }}>
+                  <h4>Coupon Code</h4>
+                  <div style={{
+                    display: 'flex',
+                    gap: '0.5rem',
+                    marginTop: '0.5rem'
+                  }}>
+                    <input
+                      type="text"
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value)}
+                      placeholder="Enter coupon code"
+                      style={{
+                        flex: 1,
+                        padding: '0.5rem',
+                        border: '1px solid #ddd',
+                        borderRadius: '4px'
+                      }}
+                    />
+                    <button
+                      onClick={handleApplyCoupon}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold',
+                        backgroundColor: '#4caf50',
+                        color: 'white'
+                      }}
+                    >
+                      Apply
+                    </button>
+                  </div>
+                  {state.appliedCoupon && (
+                    <div style={{ marginTop: '0.5rem', color: '#4caf50' }}>
+                      Coupon "{state.appliedCoupon}" applied! 
+                      <button
+                        onClick={handleRemoveCoupon}
+                        style={{
+                          marginLeft: '0.5rem',
+                          background: 'none',
+                          border: 'none',
+                          color: '#f44336',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                  <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.5rem' }}>
+                    Try: SAVE10, SAVE20, or WELCOME15
+                  </p>
+                </div>
+
+                {/* Summary */}
+                <div style={{
+                  marginTop: '1.5rem',
+                  paddingTop: '1.5rem',
+                  borderTop: '1px solid #eee'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginBottom: '0.5rem'
+                  }}>
+                    <span>Subtotal:</span>
+                    <span>${subtotal.toFixed(2)}</span>
+                  </div>
+                  {state.discountPercentage > 0 && (
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      marginBottom: '0.5rem',
+                      color: '#4caf50'
+                    }}>
+                      <span>Discount ({state.discountPercentage}%):</span>
+                      <span>-${discountAmount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontWeight: 'bold',
+                    fontSize: '1.2rem',
+                    marginTop: '1rem',
+                    paddingTop: '1rem',
+                    borderTop: '1px solid #ddd'
+                  }}>
+                    <span>Total:</span>
+                    <span>${total.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Wishlist Tab */}
+          {state.activeTab === 'wishlist' && (
+            <div style={{
+              background: 'white',
+              borderRadius: '8px',
+              padding: '1.5rem',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+              gridColumn: window.innerWidth > 768 ? '1 / -1' : '1'
+            }}>
+              <h2>Wishlist</h2>
+              {state.wishlist.length === 0 ? (
+                <div style={{
+                  textAlign: 'center',
+                  padding: '2rem',
+                  color: '#777'
+                }}>
+                  Your wishlist is empty
+                </div>
+              ) : (
+                state.wishlist.map(item => (
+                  <div
+                    key={item.id}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '1rem 0',
+                      borderBottom: '1px solid #eee'
+                    }}
+                  >
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '1rem'
+                    }}>
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        style={{
+                          width: '60px',
+                          height: '60px',
+                          objectFit: 'cover',
+                          borderRadius: '4px'
+                        }}
+                      />
+                      <div>
+                        <h4>{item.name}</h4>
+                        <p>${item.price.toFixed(2)}</p>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button
+                        onClick={() => handleMoveToCart(item.id)}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontWeight: 'bold',
+                          backgroundColor: '#4caf50',
+                          color: 'white'
+                        }}
+                      >
+                        Move to Cart
+                      </button>
+                      <button
+                        onClick={() => handleRemoveFromWishlist(item.id)}
+                        style={{
+                          backgroundColor: '#f44336',
+                          color: 'white',
+                          border: 'none',
+                          padding: '0.3rem 0.7rem',
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
 
-// Root Component with Custom Provider
-const App = () => {
-  return (
-    <ShoppingProvider>
-      <link 
-        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" 
-        rel="stylesheet"
-      />
-      <ShoppingCartApp />
-    </ShoppingProvider>
-  );
-};
-
-export default App;
+export default ShoppingCart;
