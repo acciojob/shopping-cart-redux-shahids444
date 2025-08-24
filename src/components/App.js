@@ -206,316 +206,131 @@ const ShoppingCart = () => {
   };
 
   return (
-    <div style={{
-      margin: 0,
-      padding: 0,
-      boxSizing: 'border-box',
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-      backgroundColor: '#f5f5f5',
-      color: '#333',
-      lineHeight: 1.6,
-      minHeight: '100vh'
-    }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-        {/* Navbar Header - matching expected class structure */}
-        <nav className="navbar navbar-expand-lg" style={{
-          backgroundColor: '#282c34',
-          color: 'white',
-          padding: '1rem',
-          marginBottom: '2rem',
-          borderRadius: '8px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <div className="text-center" style={{ fontSize: '1.8rem', fontWeight: 'bold' }}>
-            Shopping Cart - Redux Assignment
-          </div>
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <button
-              onClick={() => setActiveTab('products')}
-              style={{
-                backgroundColor: state.activeTab === 'products' ? '#4fa8c5' : '#61dafb',
-                border: 'none',
-                padding: '0.5rem 1rem',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                color: '#282c34'
-              }}
-            >
-              Products
-            </button>
-            <button
-              onClick={() => setActiveTab('cart')}
-              style={{
-                backgroundColor: state.activeTab === 'cart' ? '#4fa8c5' : '#61dafb',
-                border: 'none',
-                padding: '0.5rem 1rem',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                color: '#282c34'
-              }}
-            >
-              Cart ({state.cart.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('wishlist')}
-              style={{
-                backgroundColor: state.activeTab === 'wishlist' ? '#4fa8c5' : '#61dafb',
-                border: 'none',
-                padding: '0.5rem 1rem',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                color: '#282c34'
-              }}
-            >
-              Wishlist ({state.wishlist.length})
-            </button>
-          </div>
-        </nav>
+    <>
+      {/* First child - Navbar Header */}
+      <nav className="navbar navbar-expand-lg" style={{
+        backgroundColor: '#282c34',
+        color: 'white',
+        padding: '1rem',
+        marginBottom: '2rem',
+        borderRadius: '8px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <div className="text-center" style={{ fontSize: '1.8rem', fontWeight: 'bold' }}>
+          Shopping Cart - Redux Assignment
+        </div>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button
+            onClick={() => setActiveTab('products')}
+            style={{
+              backgroundColor: state.activeTab === 'products' ? '#4fa8c5' : '#61dafb',
+              border: 'none',
+              padding: '0.5rem 1rem',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              color: '#282c34'
+            }}
+          >
+            Products
+          </button>
+          <button
+            onClick={() => setActiveTab('cart')}
+            style={{
+              backgroundColor: state.activeTab === 'cart' ? '#4fa8c5' : '#61dafb',
+              border: 'none',
+              padding: '0.5rem 1rem',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              color: '#282c34'
+            }}
+          >
+            Cart ({state.cart.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('wishlist')}
+            style={{
+              backgroundColor: state.activeTab === 'wishlist' ? '#4fa8c5' : '#61dafb',
+              border: 'none',
+              padding: '0.5rem 1rem',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              color: '#282c34'
+            }}
+          >
+            Wishlist ({state.wishlist.length})
+          </button>
+        </div>
+      </nav>
 
-        {/* Content */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: window.innerWidth > 768 ? '2fr 1fr' : '1fr',
-          gap: '2rem'
-        }}>
-          {/* Products Tab */}
-          {state.activeTab === 'products' && (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-              gap: '1.5rem',
-              gridColumn: window.innerWidth > 768 ? '1 / -1' : '1'
+      {/* Second child - Main Content Container */}
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '20px',
+        display: 'grid',
+        gridTemplateColumns: window.innerWidth > 768 ? '2fr 1fr' : '1fr',
+        gap: '2rem'
+      }}>
+        {/* Products Tab */}
+        {state.activeTab === 'products' && (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+            gap: '1.5rem',
+            gridColumn: window.innerWidth > 768 ? '1 / -1' : '1'
+          }}>
+            <h3 style={{ 
+              gridColumn: '1 / -1',
+              fontSize: '1.5rem',
+              marginBottom: '1rem',
+              color: '#333'
             }}>
-              {state.products.map(product => (
-                <div
-                  key={product.id}
-                  className="custom-card card"
-                  style={{
-                    background: 'white',
-                    borderRadius: '8px',
-                    overflow: 'hidden',
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                    transition: 'transform 0.2s'
-                  }}
-                >
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    style={{
-                      width: '100%',
-                      height: '200px',
-                      objectFit: 'cover'
-                    }}
-                  />
-                  <div className="card-body" style={{ padding: '1rem' }}>
-                    <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>
-                      {product.name}
-                    </h3>
-                    <p style={{
-                      fontWeight: 'bold',
-                      color: '#e91e63',
-                      marginBottom: '1rem'
-                    }}>
-                      ${product.price.toFixed(2)}
-                    </p>
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between'
-                    }}>
-                      <button
-                        className="btn btn-primary"
-                        onClick={() => handleAddToCart(product)}
-                        style={{
-                          padding: '0.5rem 1rem',
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontWeight: 'bold',
-                          backgroundColor: '#4caf50',
-                          color: 'white'
-                        }}
-                      >
-                        Add to Cart
-                      </button>
-                      <button
-                        className="btn btn-secondary"
-                        onClick={() => handleAddToWishlist(product)}
-                        style={{
-                          padding: '0.5rem 1rem',
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontWeight: 'bold',
-                          backgroundColor: '#ff9800',
-                          color: 'white'
-                        }}
-                      >
-                        Add to Wishlist
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Cart Tab */}
-          {state.activeTab === 'cart' && (
-            <>
-              <div>
-                <div style={{
+              Products
+            </h3>
+            {state.products.map(product => (
+              <div
+                key={product.id}
+                className="custom-card card"
+                style={{
                   background: 'white',
                   borderRadius: '8px',
-                  padding: '1.5rem',
-                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
-                }}>
-                  <h2>Shopping Cart</h2>
-                  {state.cart.length === 0 ? (
-                    <div style={{
-                      textAlign: 'center',
-                      padding: '2rem',
-                      color: '#777'
-                    }}>
-                      Your cart is empty
-                    </div>
-                  ) : (
-                    <div className="cart-items">
-                      {state.cart.map(item => (
-                        <div
-                          key={item.id}
-                          className="cart-item"
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            padding: '1rem 0',
-                            borderBottom: '1px solid #eee'
-                          }}
-                        >
-                          <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '1rem'
-                          }}>
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              style={{
-                                width: '60px',
-                                height: '60px',
-                                objectFit: 'cover',
-                                borderRadius: '4px'
-                              }}
-                            />
-                            <div>
-                              <h4>{item.name}</h4>
-                              <p>${item.price.toFixed(2)}</p>
-                            </div>
-                          </div>
-                          <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '1rem'
-                          }}>
-                            <div className="quantity-controls" style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '0.5rem'
-                            }}>
-                              <button
-                                className="quantity-decrease"
-                                onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                                style={{
-                                  width: '30px',
-                                  height: '30px',
-                                  borderRadius: '50%',
-                                  border: '1px solid #ddd',
-                                  background: 'white',
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                -
-                              </button>
-                              <span className="quantity">{item.quantity}</span>
-                              <button
-                                className="quantity-increase"
-                                onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                                style={{
-                                  width: '30px',
-                                  height: '30px',
-                                  borderRadius: '50%',
-                                  border: '1px solid #ddd',
-                                  background: 'white',
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                +
-                              </button>
-                            </div>
-                            <button
-                              className="remove-btn"
-                              onClick={() => handleRemoveFromCart(item.id)}
-                              style={{
-                                backgroundColor: '#f44336',
-                                color: 'white',
-                                border: 'none',
-                                padding: '0.3rem 0.7rem',
-                                borderRadius: '4px',
-                                cursor: 'pointer'
-                              }}
-                            >
-                              Remove
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Cart Summary */}
-              <div style={{
-                background: 'white',
-                borderRadius: '8px',
-                padding: '1.5rem',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
-              }}>
-                <h3>Order Summary</h3>
-                
-                {/* Coupon Section */}
-                <div style={{
-                  marginTop: '1.5rem',
-                  paddingTop: '1.5rem',
-                  borderTop: '1px solid #eee'
-                }}>
-                  <h4>Coupon Code</h4>
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                  transition: 'transform 0.2s'
+                }}
+              >
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  style={{
+                    width: '100%',
+                    height: '200px',
+                    objectFit: 'cover'
+                  }}
+                />
+                <div className="card-body" style={{ padding: '1rem' }}>
+                  <h4 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>
+                    {product.name}
+                  </h4>
+                  <p style={{
+                    fontWeight: 'bold',
+                    color: '#e91e63',
+                    marginBottom: '1rem'
+                  }}>
+                    ${product.price.toFixed(2)}
+                  </p>
                   <div style={{
                     display: 'flex',
-                    gap: '0.5rem',
-                    marginTop: '0.5rem'
+                    justifyContent: 'space-between'
                   }}>
-                    <input
-                      type="text"
-                      className="coupon-input"
-                      value={couponInput}
-                      onChange={(e) => setCouponInput(e.target.value)}
-                      placeholder="Enter coupon code"
-                      style={{
-                        flex: 1,
-                        padding: '0.5rem',
-                        border: '1px solid #ddd',
-                        borderRadius: '4px'
-                      }}
-                    />
                     <button
-                      className="apply-coupon-btn"
-                      onClick={handleApplyCoupon}
+                      className="btn btn-primary"
+                      onClick={() => handleAddToCart(product)}
                       style={{
                         padding: '0.5rem 1rem',
                         border: 'none',
@@ -526,165 +341,362 @@ const ShoppingCart = () => {
                         color: 'white'
                       }}
                     >
-                      Apply
+                      Add to Cart
+                    </button>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => handleAddToWishlist(product)}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold',
+                        backgroundColor: '#ff9800',
+                        color: 'white'
+                      }}
+                    >
+                      Add to Wishlist
                     </button>
                   </div>
-                  {state.appliedCoupon && (
-                    <div style={{ marginTop: '0.5rem', color: '#4caf50' }}>
-                      Coupon "{state.appliedCoupon}" applied! 
-                      <button
-                        onClick={handleRemoveCoupon}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Cart Tab */}
+        {state.activeTab === 'cart' && (
+          <>
+            <div>
+              <h3 style={{ 
+                fontSize: '1.5rem',
+                marginBottom: '1rem',
+                color: '#333'
+              }}>
+                Shopping Cart
+              </h3>
+              <div style={{
+                background: 'white',
+                borderRadius: '8px',
+                padding: '1.5rem',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+              }}>
+                {state.cart.length === 0 ? (
+                  <div style={{
+                    textAlign: 'center',
+                    padding: '2rem',
+                    color: '#777'
+                  }}>
+                    Your cart is empty
+                  </div>
+                ) : (
+                  <div className="cart-items">
+                    {state.cart.map(item => (
+                      <div
+                        key={item.id}
+                        className="cart-item"
                         style={{
-                          marginLeft: '0.5rem',
-                          background: 'none',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '1rem 0',
+                          borderBottom: '1px solid #eee'
+                        }}
+                      >
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '1rem'
+                        }}>
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            style={{
+                              width: '60px',
+                              height: '60px',
+                              objectFit: 'cover',
+                              borderRadius: '4px'
+                            }}
+                          />
+                          <div>
+                            <h4>{item.name}</h4>
+                            <p>${item.price.toFixed(2)}</p>
+                          </div>
+                        </div>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '1rem'
+                        }}>
+                          <div className="quantity-controls" style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem'
+                          }}>
+                            <button
+                              className="quantity-decrease"
+                              onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                              style={{
+                                width: '30px',
+                                height: '30px',
+                                borderRadius: '50%',
+                                border: '1px solid #ddd',
+                                background: 'white',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              -
+                            </button>
+                            <span className="quantity">{item.quantity}</span>
+                            <button
+                              className="quantity-increase"
+                              onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                              style={{
+                                width: '30px',
+                                height: '30px',
+                                borderRadius: '50%',
+                                border: '1px solid #ddd',
+                                background: 'white',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              +
+                            </button>
+                          </div>
+                          <button
+                            className="remove-btn"
+                            onClick={() => handleRemoveFromCart(item.id)}
+                            style={{
+                              backgroundColor: '#f44336',
+                              color: 'white',
+                              border: 'none',
+                              padding: '0.3rem 0.7rem',
+                              borderRadius: '4px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Cart Summary */}
+            <div style={{
+              background: 'white',
+              borderRadius: '8px',
+              padding: '1.5rem',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3>Order Summary</h3>
+              
+              {/* Coupon Section */}
+              <div style={{
+                marginTop: '1.5rem',
+                paddingTop: '1.5rem',
+                borderTop: '1px solid #eee'
+              }}>
+                <h4>Coupon Code</h4>
+                <div style={{
+                  display: 'flex',
+                  gap: '0.5rem',
+                  marginTop: '0.5rem'
+                }}>
+                  <input
+                    type="text"
+                    className="coupon-input"
+                    value={couponInput}
+                    onChange={(e) => setCouponInput(e.target.value)}
+                    placeholder="Enter coupon code"
+                    style={{
+                      flex: 1,
+                      padding: '0.5rem',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px'
+                    }}
+                  />
+                  <button
+                    className="apply-coupon-btn"
+                    onClick={handleApplyCoupon}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontWeight: 'bold',
+                      backgroundColor: '#4caf50',
+                      color: 'white'
+                    }}
+                  >
+                    Apply
+                  </button>
+                </div>
+                {state.appliedCoupon && (
+                  <div style={{ marginTop: '0.5rem', color: '#4caf50' }}>
+                    Coupon "{state.appliedCoupon}" applied! 
+                    <button
+                      onClick={handleRemoveCoupon}
+                      style={{
+                        marginLeft: '0.5rem',
+                        background: 'none',
+                        border: 'none',
+                        color: '#f44336',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+                <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.5rem' }}>
+                  Try: SAVE10, SAVE20, or WELCOME15
+                </p>
+              </div>
+
+              {/* Summary */}
+              <div className="cart-summary" style={{
+                marginTop: '1.5rem',
+                paddingTop: '1.5rem',
+                borderTop: '1px solid #eee'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginBottom: '0.5rem'
+                }}>
+                  <span>Subtotal:</span>
+                  <span className="subtotal">${subtotal.toFixed(2)}</span>
+                </div>
+                {state.discountPercentage > 0 && (
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginBottom: '0.5rem',
+                    color: '#4caf50'
+                  }}>
+                    <span>Discount ({state.discountPercentage}%):</span>
+                    <span className="discount">-${discountAmount.toFixed(2)}</span>
+                  </div>
+                )}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  fontWeight: 'bold',
+                  fontSize: '1.2rem',
+                  marginTop: '1rem',
+                  paddingTop: '1rem',
+                  borderTop: '1px solid #ddd'
+                }}>
+                  <span>Total:</span>
+                  <span className="total">${total.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Wishlist Tab */}
+        {state.activeTab === 'wishlist' && (
+          <div style={{
+            background: 'white',
+            borderRadius: '8px',
+            padding: '1.5rem',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            gridColumn: window.innerWidth > 768 ? '1 / -1' : '1'
+          }}>
+            <h3 style={{ 
+              fontSize: '1.5rem',
+              marginBottom: '1rem',
+              color: '#333'
+            }}>
+              Wishlist
+            </h3>
+            {state.wishlist.length === 0 ? (
+              <div style={{
+                textAlign: 'center',
+                padding: '2rem',
+                color: '#777'
+              }}>
+                Your wishlist is empty
+              </div>
+            ) : (
+              <div className="wishlist-items">
+                {state.wishlist.map(item => (
+                  <div
+                    key={item.id}
+                    className="wishlist-item"
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '1rem 0',
+                      borderBottom: '1px solid #eee'
+                    }}
+                  >
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '1rem'
+                    }}>
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        style={{
+                          width: '60px',
+                          height: '60px',
+                          objectFit: 'cover',
+                          borderRadius: '4px'
+                        }}
+                      />
+                      <div>
+                        <h4>{item.name}</h4>
+                        <p>${item.price.toFixed(2)}</p>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button
+                        className="move-to-cart-btn"
+                        onClick={() => handleMoveToCart(item.id)}
+                        style={{
+                          padding: '0.5rem 1rem',
                           border: 'none',
-                          color: '#f44336',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontWeight: 'bold',
+                          backgroundColor: '#4caf50',
+                          color: 'white'
+                        }}
+                      >
+                        Move to Cart
+                      </button>
+                      <button
+                        className="remove-from-wishlist-btn"
+                        onClick={() => handleRemoveFromWishlist(item.id)}
+                        style={{
+                          backgroundColor: '#f44336',
+                          color: 'white',
+                          border: 'none',
+                          padding: '0.3rem 0.7rem',
+                          borderRadius: '4px',
                           cursor: 'pointer'
                         }}
                       >
                         Remove
                       </button>
                     </div>
-                  )}
-                  <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.5rem' }}>
-                    Try: SAVE10, SAVE20, or WELCOME15
-                  </p>
-                </div>
-
-                {/* Summary */}
-                <div className="cart-summary" style={{
-                  marginTop: '1.5rem',
-                  paddingTop: '1.5rem',
-                  borderTop: '1px solid #eee'
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    marginBottom: '0.5rem'
-                  }}>
-                    <span>Subtotal:</span>
-                    <span className="subtotal">${subtotal.toFixed(2)}</span>
                   </div>
-                  {state.discountPercentage > 0 && (
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      marginBottom: '0.5rem',
-                      color: '#4caf50'
-                    }}>
-                      <span>Discount ({state.discountPercentage}%):</span>
-                      <span className="discount">-${discountAmount.toFixed(2)}</span>
-                    </div>
-                  )}
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontWeight: 'bold',
-                    fontSize: '1.2rem',
-                    marginTop: '1rem',
-                    paddingTop: '1rem',
-                    borderTop: '1px solid #ddd'
-                  }}>
-                    <span>Total:</span>
-                    <span className="total">${total.toFixed(2)}</span>
-                  </div>
-                </div>
+                ))}
               </div>
-            </>
-          )}
-
-          {/* Wishlist Tab */}
-          {state.activeTab === 'wishlist' && (
-            <div style={{
-              background: 'white',
-              borderRadius: '8px',
-              padding: '1.5rem',
-              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-              gridColumn: window.innerWidth > 768 ? '1 / -1' : '1'
-            }}>
-              <h2>Wishlist</h2>
-              {state.wishlist.length === 0 ? (
-                <div style={{
-                  textAlign: 'center',
-                  padding: '2rem',
-                  color: '#777'
-                }}>
-                  Your wishlist is empty
-                </div>
-              ) : (
-                <div className="wishlist-items">
-                  {state.wishlist.map(item => (
-                    <div
-                      key={item.id}
-                      className="wishlist-item"
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: '1rem 0',
-                        borderBottom: '1px solid #eee'
-                      }}
-                    >
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '1rem'
-                      }}>
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          style={{
-                            width: '60px',
-                            height: '60px',
-                            objectFit: 'cover',
-                            borderRadius: '4px'
-                          }}
-                        />
-                        <div>
-                          <h4>{item.name}</h4>
-                          <p>${item.price.toFixed(2)}</p>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button
-                          className="move-to-cart-btn"
-                          onClick={() => handleMoveToCart(item.id)}
-                          style={{
-                            padding: '0.5rem 1rem',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontWeight: 'bold',
-                            backgroundColor: '#4caf50',
-                            color: 'white'
-                          }}
-                        >
-                          Move to Cart
-                        </button>
-                        <button
-                          className="remove-from-wishlist-btn"
-                          onClick={() => handleRemoveFromWishlist(item.id)}
-                          style={{
-                            backgroundColor: '#f44336',
-                            color: 'white',
-                            border: 'none',
-                            padding: '0.3rem 0.7rem',
-                            borderRadius: '4px',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
-    </div>
+    </>
   );
 };
 
