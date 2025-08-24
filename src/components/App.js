@@ -217,8 +217,8 @@ const ShoppingCart = () => {
       minHeight: '100vh'
     }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-        {/* Header */}
-        <header style={{
+        {/* Navbar Header - matching expected class structure */}
+        <nav className="navbar navbar-expand-lg" style={{
           backgroundColor: '#282c34',
           color: 'white',
           padding: '1rem',
@@ -228,7 +228,9 @@ const ShoppingCart = () => {
           justifyContent: 'space-between',
           alignItems: 'center'
         }}>
-          <h1 style={{ fontSize: '1.8rem' }}>Shopping Cart - Redux Assignment</h1>
+          <div className="text-center" style={{ fontSize: '1.8rem', fontWeight: 'bold' }}>
+            Shopping Cart - Redux Assignment
+          </div>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button
               onClick={() => setActiveTab('products')}
@@ -273,7 +275,7 @@ const ShoppingCart = () => {
               Wishlist ({state.wishlist.length})
             </button>
           </div>
-        </header>
+        </nav>
 
         {/* Content */}
         <div style={{
@@ -292,6 +294,7 @@ const ShoppingCart = () => {
               {state.products.map(product => (
                 <div
                   key={product.id}
+                  className="custom-card card"
                   style={{
                     background: 'white',
                     borderRadius: '8px',
@@ -299,8 +302,6 @@ const ShoppingCart = () => {
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                     transition: 'transform 0.2s'
                   }}
-                  onMouseEnter={(e) => e.target.style.transform = 'translateY(-5px)'}
-                  onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
                 >
                   <img
                     src={product.image}
@@ -311,7 +312,7 @@ const ShoppingCart = () => {
                       objectFit: 'cover'
                     }}
                   />
-                  <div style={{ padding: '1rem' }}>
+                  <div className="card-body" style={{ padding: '1rem' }}>
                     <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>
                       {product.name}
                     </h3>
@@ -327,6 +328,7 @@ const ShoppingCart = () => {
                       justifyContent: 'space-between'
                     }}>
                       <button
+                        className="btn btn-primary"
                         onClick={() => handleAddToCart(product)}
                         style={{
                           padding: '0.5rem 1rem',
@@ -341,6 +343,7 @@ const ShoppingCart = () => {
                         Add to Cart
                       </button>
                       <button
+                        className="btn btn-secondary"
                         onClick={() => handleAddToWishlist(product)}
                         style={{
                           padding: '0.5rem 1rem',
@@ -352,7 +355,7 @@ const ShoppingCart = () => {
                           color: 'white'
                         }}
                       >
-                        Wishlist
+                        Add to Wishlist
                       </button>
                     </div>
                   </div>
@@ -381,91 +384,97 @@ const ShoppingCart = () => {
                       Your cart is empty
                     </div>
                   ) : (
-                    state.cart.map(item => (
-                      <div
-                        key={item.id}
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          padding: '1rem 0',
-                          borderBottom: '1px solid #eee'
-                        }}
-                      >
-                        <div style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '1rem'
-                        }}>
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            style={{
-                              width: '60px',
-                              height: '60px',
-                              objectFit: 'cover',
-                              borderRadius: '4px'
-                            }}
-                          />
-                          <div>
-                            <h4>{item.name}</h4>
-                            <p>${item.price.toFixed(2)}</p>
-                          </div>
-                        </div>
-                        <div style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '1rem'
-                        }}>
+                    <div className="cart-items">
+                      {state.cart.map(item => (
+                        <div
+                          key={item.id}
+                          className="cart-item"
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '1rem 0',
+                            borderBottom: '1px solid #eee'
+                          }}
+                        >
                           <div style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '0.5rem'
+                            gap: '1rem'
                           }}>
-                            <button
-                              onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                            <img
+                              src={item.image}
+                              alt={item.name}
                               style={{
-                                width: '30px',
-                                height: '30px',
-                                borderRadius: '50%',
-                                border: '1px solid #ddd',
-                                background: 'white',
+                                width: '60px',
+                                height: '60px',
+                                objectFit: 'cover',
+                                borderRadius: '4px'
+                              }}
+                            />
+                            <div>
+                              <h4>{item.name}</h4>
+                              <p>${item.price.toFixed(2)}</p>
+                            </div>
+                          </div>
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '1rem'
+                          }}>
+                            <div className="quantity-controls" style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '0.5rem'
+                            }}>
+                              <button
+                                className="quantity-decrease"
+                                onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                                style={{
+                                  width: '30px',
+                                  height: '30px',
+                                  borderRadius: '50%',
+                                  border: '1px solid #ddd',
+                                  background: 'white',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                -
+                              </button>
+                              <span className="quantity">{item.quantity}</span>
+                              <button
+                                className="quantity-increase"
+                                onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                                style={{
+                                  width: '30px',
+                                  height: '30px',
+                                  borderRadius: '50%',
+                                  border: '1px solid #ddd',
+                                  background: 'white',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                +
+                              </button>
+                            </div>
+                            <button
+                              className="remove-btn"
+                              onClick={() => handleRemoveFromCart(item.id)}
+                              style={{
+                                backgroundColor: '#f44336',
+                                color: 'white',
+                                border: 'none',
+                                padding: '0.3rem 0.7rem',
+                                borderRadius: '4px',
                                 cursor: 'pointer'
                               }}
                             >
-                              -
-                            </button>
-                            <span>{item.quantity}</span>
-                            <button
-                              onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                              style={{
-                                width: '30px',
-                                height: '30px',
-                                borderRadius: '50%',
-                                border: '1px solid #ddd',
-                                background: 'white',
-                                cursor: 'pointer'
-                              }}
-                            >
-                              +
+                              Remove
                             </button>
                           </div>
-                          <button
-                            onClick={() => handleRemoveFromCart(item.id)}
-                            style={{
-                              backgroundColor: '#f44336',
-                              color: 'white',
-                              border: 'none',
-                              padding: '0.3rem 0.7rem',
-                              borderRadius: '4px',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            Remove
-                          </button>
                         </div>
-                      </div>
-                    ))
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>
@@ -493,6 +502,7 @@ const ShoppingCart = () => {
                   }}>
                     <input
                       type="text"
+                      className="coupon-input"
                       value={couponInput}
                       onChange={(e) => setCouponInput(e.target.value)}
                       placeholder="Enter coupon code"
@@ -504,6 +514,7 @@ const ShoppingCart = () => {
                       }}
                     />
                     <button
+                      className="apply-coupon-btn"
                       onClick={handleApplyCoupon}
                       style={{
                         padding: '0.5rem 1rem',
@@ -541,7 +552,7 @@ const ShoppingCart = () => {
                 </div>
 
                 {/* Summary */}
-                <div style={{
+                <div className="cart-summary" style={{
                   marginTop: '1.5rem',
                   paddingTop: '1.5rem',
                   borderTop: '1px solid #eee'
@@ -552,7 +563,7 @@ const ShoppingCart = () => {
                     marginBottom: '0.5rem'
                   }}>
                     <span>Subtotal:</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span className="subtotal">${subtotal.toFixed(2)}</span>
                   </div>
                   {state.discountPercentage > 0 && (
                     <div style={{
@@ -562,7 +573,7 @@ const ShoppingCart = () => {
                       color: '#4caf50'
                     }}>
                       <span>Discount ({state.discountPercentage}%):</span>
-                      <span>-${discountAmount.toFixed(2)}</span>
+                      <span className="discount">-${discountAmount.toFixed(2)}</span>
                     </div>
                   )}
                   <div style={{
@@ -575,7 +586,7 @@ const ShoppingCart = () => {
                     borderTop: '1px solid #ddd'
                   }}>
                     <span>Total:</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span className="total">${total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -601,68 +612,73 @@ const ShoppingCart = () => {
                   Your wishlist is empty
                 </div>
               ) : (
-                state.wishlist.map(item => (
-                  <div
-                    key={item.id}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: '1rem 0',
-                      borderBottom: '1px solid #eee'
-                    }}
-                  >
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '1rem'
-                    }}>
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        style={{
-                          width: '60px',
-                          height: '60px',
-                          objectFit: 'cover',
-                          borderRadius: '4px'
-                        }}
-                      />
-                      <div>
-                        <h4>{item.name}</h4>
-                        <p>${item.price.toFixed(2)}</p>
+                <div className="wishlist-items">
+                  {state.wishlist.map(item => (
+                    <div
+                      key={item.id}
+                      className="wishlist-item"
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '1rem 0',
+                        borderBottom: '1px solid #eee'
+                      }}
+                    >
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '1rem'
+                      }}>
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          style={{
+                            width: '60px',
+                            height: '60px',
+                            objectFit: 'cover',
+                            borderRadius: '4px'
+                          }}
+                        />
+                        <div>
+                          <h4>{item.name}</h4>
+                          <p>${item.price.toFixed(2)}</p>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button
+                          className="move-to-cart-btn"
+                          onClick={() => handleMoveToCart(item.id)}
+                          style={{
+                            padding: '0.5rem 1rem',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontWeight: 'bold',
+                            backgroundColor: '#4caf50',
+                            color: 'white'
+                          }}
+                        >
+                          Move to Cart
+                        </button>
+                        <button
+                          className="remove-from-wishlist-btn"
+                          onClick={() => handleRemoveFromWishlist(item.id)}
+                          style={{
+                            backgroundColor: '#f44336',
+                            color: 'white',
+                            border: 'none',
+                            padding: '0.3rem 0.7rem',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Remove
+                        </button>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button
-                        onClick={() => handleMoveToCart(item.id)}
-                        style={{
-                          padding: '0.5rem 1rem',
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontWeight: 'bold',
-                          backgroundColor: '#4caf50',
-                          color: 'white'
-                        }}
-                      >
-                        Move to Cart
-                      </button>
-                      <button
-                        onClick={() => handleRemoveFromWishlist(item.id)}
-                        style={{
-                          backgroundColor: '#f44336',
-                          color: 'white',
-                          border: 'none',
-                          padding: '0.3rem 0.7rem',
-                          borderRadius: '4px',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                ))
+                  ))}
+                </div>
               )}
             </div>
           )}
