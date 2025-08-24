@@ -1,395 +1,73 @@
-import React, { useReducer, createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useReducer } from 'react';
 
-// Redux-like Action Types
-const ACTION_TYPES = {
-  ADD_TO_CART: 'ADD_TO_CART',
-  REMOVE_FROM_CART: 'REMOVE_FROM_CART',
-  INCREASE_QUANTITY: 'INCREASE_QUANTITY',
-  DECREASE_QUANTITY: 'DECREASE_QUANTITY',
-  ADD_TO_WISHLIST: 'ADD_TO_WISHLIST',
-  REMOVE_FROM_WISHLIST: 'REMOVE_FROM_WISHLIST',
-  APPLY_COUPON: 'APPLY_COUPON',
-  REMOVE_COUPON: 'REMOVE_COUPON'
-};
+// Action Types
+const ADD_TO_CART = 'ADD_TO_CART';
+const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
+const INCREASE_QUANTITY = 'INCREASE_QUANTITY';
+const DECREASE_QUANTITY = 'DECREASE_QUANTITY';
+const ADD_TO_WISHLIST = 'ADD_TO_WISHLIST';
+const REMOVE_FROM_WISHLIST = 'REMOVE_FROM_WISHLIST';
+const APPLY_DISCOUNT = 'APPLY_DISCOUNT';
+const CLEAR_DISCOUNT = 'CLEAR_DISCOUNT';
+
+// Action Creators
+const addToCart = (product) => ({
+  type: ADD_TO_CART,
+  payload: product
+});
+
+const removeFromCart = (productId) => ({
+  type: REMOVE_FROM_CART,
+  payload: productId
+});
+
+const increaseQuantity = (productId) => ({
+  type: INCREASE_QUANTITY,
+  payload: productId
+});
+
+const decreaseQuantity = (productId) => ({
+  type: DECREASE_QUANTITY,
+  payload: productId
+});
+
+const addToWishlist = (product) => ({
+  type: ADD_TO_WISHLIST,
+  payload: product
+});
+
+const removeFromWishlist = (productId) => ({
+  type: REMOVE_FROM_WISHLIST,
+  payload: productId
+});
+
+const applyDiscount = (couponCode) => ({
+  type: APPLY_DISCOUNT,
+  payload: couponCode
+});
+
+const clearDiscount = () => ({
+  type: CLEAR_DISCOUNT
+});
 
 // Initial State
 const initialState = {
   cart: [],
   wishlist: [],
+  discount: 0,
   appliedCoupon: null,
-  coupons: [
-    { code: 'SAVE10', discount: 0.1, minAmount: 50, description: '10% off orders $50+' },
-    { code: 'WELCOME20', discount: 0.2, minAmount: 100, description: '20% off orders $100+' },
-    { code: 'FLAT15', discount: 15, minAmount: 30, description: '$15 off orders $30+', isFlat: true }
-  ]
+  coupons: {
+    'SAVE10': 10,
+    'SAVE20': 20,
+    'WELCOME5': 5,
+    'MEGA25': 25
+  }
 };
 
-// Sample Products
-const products = [
-  { id: 1, name: 'Premium Headphones', price: 299.99, image: '🎧', rating: 4.8 },
-  { id: 2, name: 'Wireless Mouse', price: 49.99, image: '🖱️', rating: 4.5 },
-  { id: 3, name: 'Mechanical Keyboard', price: 149.99, image: '⌨️', rating: 4.7 },
-  { id: 4, name: 'USB-C Cable', price: 19.99, image: '🔌', rating: 4.3 },
-  { id: 5, name: 'Phone Stand', price: 24.99, image: '📱', rating: 4.6 },
-  { id: 6, name: 'Laptop Sleeve', price: 39.99, image: '💼', rating: 4.4 }
-];
-
-// CSS Styles for Bootstrap-like appearance
-const styles = `
-  * {
-    box-sizing: border-box;
-  }
-
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background-color: #f8f9fa;
-  }
-
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
-  }
-
-  .navbar-expand-lg {
-    background-color: #343a40;
-    padding: 1rem 0;
-    margin-bottom: 2rem;
-  }
-
-  .text-center {
-    text-align: center;
-    color: white;
-    margin: 0;
-    font-size: 2rem;
-    font-weight: bold;
-  }
-
-  .row {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -15px;
-  }
-
-  .col-lg-3,
-  .col-md-6,
-  .col-sm-12 {
-    padding: 0 15px;
-    margin-bottom: 30px;
-    flex: 0 0 25%;
-    max-width: 25%;
-  }
-
-  @media (max-width: 992px) {
-    .col-lg-3 {
-      flex: 0 0 50%;
-      max-width: 50%;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .col-lg-3 {
-      flex: 0 0 100%;
-      max-width: 100%;
-    }
-  }
-
-  .custom-card.card {
-    border: 1px solid #dee2e6;
-    border-radius: 0.375rem;
-    background: white;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    transition: box-shadow 0.15s ease-in-out;
-  }
-
-  .custom-card.card:hover {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-  }
-
-  .card-body {
-    padding: 1.25rem;
-    text-align: center;
-  }
-
-  .card-title {
-    margin-bottom: 0.75rem;
-    font-size: 1.25rem;
-    font-weight: 500;
-    color: #212529;
-  }
-
-  .card-text {
-    margin-bottom: 1rem;
-    color: #6c757d;
-  }
-
-  .product-image {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-  }
-
-  .product-price {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #007bff;
-    margin-bottom: 1rem;
-  }
-
-  .btn {
-    display: inline-block;
-    font-weight: 400;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    user-select: none;
-    border: 1px solid transparent;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    border-radius: 0.375rem;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    cursor: pointer;
-    margin: 0.25rem;
-  }
-
-  .btn-primary {
-    color: #fff;
-    background-color: #007bff;
-    border-color: #007bff;
-  }
-
-  .btn-primary:hover {
-    color: #fff;
-    background-color: #0056b3;
-    border-color: #0056b3;
-  }
-
-  .btn-success {
-    color: #fff;
-    background-color: #28a745;
-    border-color: #28a745;
-  }
-
-  .btn-success:hover {
-    color: #fff;
-    background-color: #218838;
-    border-color: #1e7e34;
-  }
-
-  .btn-danger {
-    color: #fff;
-    background-color: #dc3545;
-    border-color: #dc3545;
-  }
-
-  .btn-danger:hover {
-    color: #fff;
-    background-color: #c82333;
-    border-color: #bd2130;
-  }
-
-  .btn-outline-secondary {
-    color: #6c757d;
-    background-color: transparent;
-    border-color: #6c757d;
-  }
-
-  .btn-outline-secondary:hover {
-    color: #fff;
-    background-color: #6c757d;
-    border-color: #6c757d;
-  }
-
-  .btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    border-radius: 0.25rem;
-  }
-
-  .mt-4 {
-    margin-top: 1.5rem;
-  }
-
-  .mb-4 {
-    margin-bottom: 1.5rem;
-  }
-
-  .cart-section,
-  .wishlist-section {
-    background: white;
-    border-radius: 0.375rem;
-    padding: 2rem;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    margin-bottom: 2rem;
-  }
-
-  .cart-item,
-  .wishlist-item {
-    border: 1px solid #dee2e6;
-    border-radius: 0.375rem;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .cart-item-details {
-    flex: 1;
-  }
-
-  .quantity-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .quantity-display {
-    min-width: 2rem;
-    text-align: center;
-    font-weight: bold;
-  }
-
-  .cart-summary {
-    border-top: 1px solid #dee2e6;
-    padding-top: 1rem;
-    margin-top: 1rem;
-  }
-
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-  }
-
-  .summary-total {
-    display: flex;
-    justify-content: space-between;
-    font-weight: bold;
-    font-size: 1.125rem;
-    border-top: 1px solid #dee2e6;
-    padding-top: 0.5rem;
-    margin-top: 0.5rem;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 3rem;
-    color: #6c757d;
-  }
-
-  .empty-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-  }
-
-  .nav-tabs {
-    display: flex;
-    border-bottom: 1px solid #dee2e6;
-    margin-bottom: 2rem;
-  }
-
-  .nav-link {
-    padding: 0.5rem 1rem;
-    border: 1px solid transparent;
-    border-top-left-radius: 0.375rem;
-    border-top-right-radius: 0.375rem;
-    color: #495057;
-    background: none;
-    cursor: pointer;
-    text-decoration: none;
-    margin-bottom: -1px;
-  }
-
-  .nav-link.active {
-    color: #495057;
-    background-color: #fff;
-    border-color: #dee2e6 #dee2e6 #fff;
-  }
-
-  .nav-link:hover {
-    border-color: #e9ecef #e9ecef #dee2e6;
-  }
-
-  .coupon-section {
-    background: white;
-    border-radius: 0.375rem;
-    padding: 2rem;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  }
-
-  .form-control {
-    display: block;
-    width: 100%;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: #495057;
-    background-color: #fff;
-    background-image: none;
-    border: 1px solid #ced4da;
-    border-radius: 0.375rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  }
-
-  .form-control:focus {
-    color: #495057;
-    background-color: #fff;
-    border-color: #80bdff;
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-  }
-
-  .input-group {
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-    width: 100%;
-  }
-
-  .input-group .form-control {
-    position: relative;
-    flex: 1 1 auto;
-    width: 1%;
-    margin-bottom: 0;
-  }
-
-  .input-group-append {
-    margin-left: -1px;
-  }
-
-  .alert {
-    position: relative;
-    padding: 0.75rem 1.25rem;
-    margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: 0.375rem;
-  }
-
-  .alert-success {
-    color: #155724;
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-  }
-
-  .btn-close {
-    background: none;
-    border: none;
-    font-size: 1.25rem;
-    cursor: pointer;
-    color: inherit;
-  }
-`;
-
-// Redux Reducer
-const cartReducer = (state, action) => {
+// Reducer Function
+const shoppingReducer = (state, action) => {
   switch (action.type) {
-    case ACTION_TYPES.ADD_TO_CART:
+    case ADD_TO_CART: {
       const existingItem = state.cart.find(item => item.id === action.payload.id);
       if (existingItem) {
         return {
@@ -400,62 +78,74 @@ const cartReducer = (state, action) => {
               : item
           )
         };
+      } else {
+        return {
+          ...state,
+          cart: [...state.cart, { ...action.payload, quantity: 1 }]
+        };
       }
+    }
+
+    case REMOVE_FROM_CART:
       return {
         ...state,
-        cart: [...state.cart, { ...action.payload, quantity: 1 }]
+        cart: state.cart.filter(item => item.id !== action.payload)
       };
 
-    case ACTION_TYPES.REMOVE_FROM_CART:
-      return {
-        ...state,
-        cart: state.cart.filter(item => item.id !== action.payload.id)
-      };
-
-    case ACTION_TYPES.INCREASE_QUANTITY:
+    case INCREASE_QUANTITY:
       return {
         ...state,
         cart: state.cart.map(item =>
-          item.id === action.payload.id
+          item.id === action.payload
             ? { ...item, quantity: item.quantity + 1 }
             : item
         )
       };
 
-    case ACTION_TYPES.DECREASE_QUANTITY:
+    case DECREASE_QUANTITY:
       return {
         ...state,
         cart: state.cart.map(item =>
-          item.id === action.payload.id && item.quantity > 1
-            ? { ...item, quantity: item.quantity - 1 }
+          item.id === action.payload
+            ? { ...item, quantity: Math.max(0, item.quantity - 1) }
             : item
-        )
+        ).filter(item => item.quantity > 0)
       };
 
-    case ACTION_TYPES.ADD_TO_WISHLIST:
-      if (state.wishlist.find(item => item.id === action.payload.id)) {
+    case ADD_TO_WISHLIST: {
+      const alreadyExists = state.wishlist.find(item => item.id === action.payload.id);
+      if (alreadyExists) {
         return state;
       }
       return {
         ...state,
         wishlist: [...state.wishlist, action.payload]
       };
+    }
 
-    case ACTION_TYPES.REMOVE_FROM_WISHLIST:
+    case REMOVE_FROM_WISHLIST:
       return {
         ...state,
-        wishlist: state.wishlist.filter(item => item.id !== action.payload.id)
+        wishlist: state.wishlist.filter(item => item.id !== action.payload)
       };
 
-    case ACTION_TYPES.APPLY_COUPON:
-      return {
-        ...state,
-        appliedCoupon: action.payload
-      };
+    case APPLY_DISCOUNT: {
+      const couponCode = action.payload.toUpperCase();
+      const discountValue = state.coupons[couponCode];
+      if (discountValue) {
+        return {
+          ...state,
+          discount: discountValue,
+          appliedCoupon: couponCode
+        };
+      }
+      return state;
+    }
 
-    case ACTION_TYPES.REMOVE_COUPON:
+    case CLEAR_DISCOUNT:
       return {
         ...state,
+        discount: 0,
         appliedCoupon: null
       };
 
@@ -464,68 +154,121 @@ const cartReducer = (state, action) => {
   }
 };
 
-// Context for Redux-like state management
-const CartContext = createContext();
+// Create Context for State Management
+const ShoppingContext = createContext();
 
-// Context Provider Component
-const CartProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(cartReducer, initialState);
-
-  const actions = {
-    addToCart: (product) => dispatch({ type: ACTION_TYPES.ADD_TO_CART, payload: product }),
-    removeFromCart: (product) => dispatch({ type: ACTION_TYPES.REMOVE_FROM_CART, payload: product }),
-    increaseQuantity: (product) => dispatch({ type: ACTION_TYPES.INCREASE_QUANTITY, payload: product }),
-    decreaseQuantity: (product) => dispatch({ type: ACTION_TYPES.DECREASE_QUANTITY, payload: product }),
-    addToWishlist: (product) => dispatch({ type: ACTION_TYPES.ADD_TO_WISHLIST, payload: product }),
-    removeFromWishlist: (product) => dispatch({ type: ACTION_TYPES.REMOVE_FROM_WISHLIST, payload: product }),
-    applyCoupon: (coupon) => dispatch({ type: ACTION_TYPES.APPLY_COUPON, payload: coupon }),
-    removeCoupon: () => dispatch({ type: ACTION_TYPES.REMOVE_COUPON })
-  };
-
+// Provider Component
+const ShoppingProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(shoppingReducer, initialState);
+  
   return (
-    <CartContext.Provider value={{ state, ...actions }}>
+    <ShoppingContext.Provider value={{ state, dispatch }}>
       {children}
-    </CartContext.Provider>
+    </ShoppingContext.Provider>
   );
 };
 
-// Custom hook to use cart context
-const useCart = () => {
-  const context = useContext(CartContext);
+// Custom Hook to use Shopping Context
+const useShopping = () => {
+  const context = useContext(ShoppingContext);
   if (!context) {
-    throw new Error('useCart must be used within a CartProvider');
+    throw new Error('useShopping must be used within a ShoppingProvider');
   }
   return context;
 };
 
+// Sample Products Data
+const sampleProducts = [
+  { id: 1, name: 'Laptop', price: 999.99, image: '💻', category: 'Electronics' },
+  { id: 2, name: 'Smartphone', price: 599.99, image: '📱', category: 'Electronics' },
+  { id: 3, name: 'Headphones', price: 199.99, image: '🎧', category: 'Electronics' },
+  { id: 4, name: 'Coffee Maker', price: 89.99, image: '☕', category: 'Appliances' },
+  { id: 5, name: 'Book', price: 24.99, image: '📚', category: 'Books' },
+  { id: 6, name: 'T-Shirt', price: 19.99, image: '👕', category: 'Clothing' }
+];
+
 // Product Card Component
 const ProductCard = ({ product }) => {
-  const { state, addToCart, addToWishlist, removeFromWishlist } = useCart();
+  const { state, dispatch } = useShopping();
+  const { cart, wishlist } = state;
   
-  const isInWishlist = state.wishlist.some(item => item.id === product.id);
-  const isInCart = state.cart.some(item => item.id === product.id);
+  const isInCart = cart.some(item => item.id === product.id);
+  const isInWishlist = wishlist.some(item => item.id === product.id);
 
   return (
-    <div className="col-lg-3 col-md-6 col-sm-12">
-      <div className="custom-card card">
-        <div className="card-body">
-          <div className="product-image">{product.image}</div>
-           <h4 className="card-title">{product.name}</h4> 
-          <p className="card-text">⭐ {product.rating}</p>
-          <div className="product-price">${product.price}</div>
-         <button
-            className="btn btn-primary add-to-cart-btn"  // Added class
-            onClick={() => addToCart(product)}
-          >
-            {isInCart ? 'In Cart' : 'Add to Cart'}
-          </button>
-           <button
-            className={`btn ${isInWishlist ? 'btn-danger' : 'btn-outline-secondary'} wishlist-btn`}  // Added class
-            onClick={() => isInWishlist ? removeFromWishlist(product) : addToWishlist(product)}
-          >
-            {isInWishlist ? '❤️' : '🤍'}
-          </button>
-        </div>
+    <div className="bg-white rounded-lg shadow-md p-4 border hover:shadow-lg transition-shadow">
+      <div className="text-center mb-3">
+        <div className="text-4xl mb-2">{product.image}</div>
+        <h3 className="font-semibold text-lg text-gray-800">{product.name}</h3>
+        <p className="text-sm text-gray-600">{product.category}</p>
+        <p className="text-xl font-bold text-blue-600">${product.price}</p>
+      </div>
+      
+      <div className="flex gap-2">
+        <button
+          onClick={() => dispatch(addToCart(product))}
+          className={`flex-1 px-3 py-2 rounded text-sm font-medium transition-colors ${
+            isInCart
+              ? 'bg-green-100 text-green-700 border border-green-300'
+              : 'bg-blue-500 text-white hover:bg-blue-600'
+          }`}
+        >
+          {isInCart ? '✓ In Cart' : '🛒 Add to Cart'}
+        </button>
+        
+        <button
+          onClick={() => 
+            isInWishlist 
+              ? dispatch(removeFromWishlist(product.id))
+              : dispatch(addToWishlist(product))
+          }
+          className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
+            isInWishlist
+              ? 'bg-red-100 text-red-600 border border-red-300'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          {isInWishlist ? '💔' : '💖'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Cart Item Component
+const CartItem = ({ item }) => {
+  const { dispatch } = useShopping();
+
+  return (
+    <div className="flex items-center gap-4 p-4 bg-white rounded-lg shadow border">
+      <div className="text-2xl">{item.image}</div>
+      <div className="flex-1">
+        <h4 className="font-semibold">{item.name}</h4>
+        <p className="text-gray-600">${item.price}</p>
+      </div>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => dispatch(decreaseQuantity(item.id))}
+          className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center font-bold"
+        >
+          −
+        </button>
+        <span className="w-8 text-center font-medium">{item.quantity}</span>
+        <button
+          onClick={() => dispatch(increaseQuantity(item.id))}
+          className="w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center font-bold"
+        >
+          +
+        </button>
+      </div>
+      <div className="text-right">
+        <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+        <button
+          onClick={() => dispatch(removeFromCart(item.id))}
+          className="text-red-500 hover:text-red-700 text-sm"
+        >
+          Remove
+        </button>
       </div>
     </div>
   );
@@ -533,88 +276,44 @@ const ProductCard = ({ product }) => {
 
 // Cart Component
 const Cart = () => {
-  const { state, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
+  const { state } = useShopping();
+  const { cart, discount, appliedCoupon } = state;
   
-  const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  
-  let discount = 0;
-  if (state.appliedCoupon) {
-    if (state.appliedCoupon.isFlat) {
-      discount = state.appliedCoupon.discount;
-    } else {
-      discount = subtotal * state.appliedCoupon.discount;
-    }
-  }
-  
-  const total = Math.max(0, subtotal - discount);
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const discountAmount = (subtotal * discount) / 100;
+  const total = subtotal - discountAmount;
 
-  if (state.cart.length === 0) {
+  if (cart.length === 0) {
     return (
-      <div className="cart-section">
-        <div className="empty-state">
-          <div className="empty-icon">🛒</div>
-          <h3>Your cart is empty</h3>
-          <p>Add some products to get started!</p>
-        </div>
+      <div className="bg-white rounded-lg shadow-md p-6 text-center">
+        <div className="text-4xl mb-4">🛒</div>
+        <p className="text-gray-600">Your cart is empty</p>
       </div>
     );
   }
 
   return (
-    <div className="cart-section">
-      <h2>Shopping Cart ({state.cart.length})</h2>
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-2xl font-bold mb-4">Shopping Cart ({cart.length})</h2>
       
-      <div>
-        {state.cart.map(item => (
-          <div key={item.id} className="cart-item">
-            <div className="product-image" style={{ fontSize: '2rem' }}>{item.image}</div>
-            <div className="cart-item-details">
-              <h5>{item.name}</h5>
-              <p>${item.price}</p>
-            </div>
-            
-            <div className="quantity-controls">
-      <button
-        className="btn btn-sm btn-outline-secondary decrease-quantity"  // Added class
-        onClick={() => decreaseQuantity(item)}
-        disabled={item.quantity <= 1}
-      >
-                
-              </button>
-               <span className="quantity-display">{item.quantity}</span>
-      <button
-        className="btn btn-sm btn-outline-secondary increase-quantity"  // Added class
-        onClick={() => increaseQuantity(item)}
-      >
-                +
-              </button>
-            </div>
-            
-            <div style={{ textAlign: 'right' }}>
-              <div><strong>${(item.price * item.quantity).toFixed(2)}</strong></div>
-              <button
-                className="btn btn-sm btn-danger"
-                onClick={() => removeFromCart(item)}
-              >
-                🗑️
-              </button>
-            </div>
-          </div>
+      <div className="space-y-4 mb-6">
+        {cart.map(item => (
+          <CartItem key={item.id} item={item} />
         ))}
       </div>
 
-      <div className="cart-summary">
-        <div className="summary-row">
+      <div className="border-t pt-4 space-y-2">
+        <div className="flex justify-between">
           <span>Subtotal:</span>
           <span>${subtotal.toFixed(2)}</span>
         </div>
-        {state.appliedCoupon && (
-          <div className="summary-row" style={{ color: '#28a745' }}>
-            <span>Discount ({state.appliedCoupon.code}):</span>
-            <span>-${discount.toFixed(2)}</span>
+        {discount > 0 && (
+          <div className="flex justify-between text-green-600">
+            <span>Discount ({appliedCoupon}):</span>
+            <span>-${discountAmount.toFixed(2)}</span>
           </div>
         )}
-        <div className="summary-total">
+        <div className="flex justify-between text-xl font-bold border-t pt-2">
           <span>Total:</span>
           <span>${total.toFixed(2)}</span>
         </div>
@@ -625,42 +324,39 @@ const Cart = () => {
 
 // Wishlist Component
 const Wishlist = () => {
-  const { state, removeFromWishlist, addToCart } = useCart();
+  const { state, dispatch } = useShopping();
+  const { wishlist } = state;
 
-  if (state.wishlist.length === 0) {
+  if (wishlist.length === 0) {
     return (
-      <div className="wishlist-section">
-        <div className="empty-state">
-          <div className="empty-icon">💝</div>
-          <h3>Your wishlist is empty</h3>
-          <p>Save items you love for later!</p>
-        </div>
+      <div className="bg-white rounded-lg shadow-md p-6 text-center">
+        <div className="text-4xl mb-4">💖</div>
+        <p className="text-gray-600">Your wishlist is empty</p>
       </div>
     );
   }
 
   return (
-    <div className="wishlist-section">
-      <h2>Wishlist ({state.wishlist.length})</h2>
-      
-      <div>
-        {state.wishlist.map(item => (
-          <div key={item.id} className="wishlist-item">
-            <div className="product-image" style={{ fontSize: '2rem' }}>{item.image}</div>
-            <div className="cart-item-details">
-              <h5>{item.name}</h5>
-              <p>${item.price}</p>
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-2xl font-bold mb-4">Wishlist ({wishlist.length})</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {wishlist.map(product => (
+          <div key={product.id} className="flex items-center gap-4 p-4 border rounded-lg">
+            <div className="text-2xl">{product.image}</div>
+            <div className="flex-1">
+              <h4 className="font-semibold">{product.name}</h4>
+              <p className="text-blue-600 font-bold">${product.price}</p>
             </div>
-            <div>
+            <div className="flex gap-2">
               <button
-                className="btn btn-primary"
-                onClick={() => addToCart(item)}
+                onClick={() => dispatch(addToCart(product))}
+                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
               >
                 Add to Cart
               </button>
               <button
-                className="btn btn-danger"
-                onClick={() => removeFromWishlist(item)}
+                onClick={() => dispatch(removeFromWishlist(product.id))}
+                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
               >
                 Remove
               </button>
@@ -674,68 +370,82 @@ const Wishlist = () => {
 
 // Coupon Component
 const CouponSection = () => {
-  const { state, applyCoupon, removeCoupon } = useCart();
-  const [couponInput, setCouponInput] = useState('');
-  
-  const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const { state, dispatch } = useShopping();
+  const { coupons, appliedCoupon, discount } = state;
+  const [couponInput, setCouponInput] = React.useState('');
+  const [message, setMessage] = React.useState('');
 
   const handleApplyCoupon = () => {
-    const coupon = state.coupons.find(c => c.code === couponInput.toUpperCase());
-    if (coupon && subtotal >= coupon.minAmount) {
-      applyCoupon(coupon);
+    const upperCoupon = couponInput.toUpperCase();
+    if (coupons[upperCoupon]) {
+      dispatch(applyDiscount(upperCoupon));
+      setMessage(`✅ Coupon applied! ${coupons[upperCoupon]}% discount`);
       setCouponInput('');
-    } else if (coupon) {
-      alert(`Minimum order amount of $${coupon.minAmount} required for this coupon`);
     } else {
-      alert('Invalid coupon code');
+      setMessage('❌ Invalid coupon code');
     }
+    setTimeout(() => setMessage(''), 3000);
+  };
+
+  const handleClearCoupon = () => {
+    dispatch(clearDiscount());
+    setMessage('Coupon removed');
+    setTimeout(() => setMessage(''), 3000);
   };
 
   return (
-    <div className="coupon-section">
-      <h2>Discount Coupons</h2>
-
-      <div className="input-group mb-4">
-        <input
-          type="text"
-          className="form-control"
-          value={couponInput}
-          onChange={(e) => setCouponInput(e.target.value)}
-          placeholder="Enter coupon code"
-        />
-        <div className="input-group-append">
-          <button
-            className="btn btn-success"
-            onClick={handleApplyCoupon}
-            disabled={!couponInput.trim() || state.cart.length === 0}
-          >
-            Apply
-          </button>
-        </div>
-      </div>
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-2xl font-bold mb-4">Discount Coupons</h2>
       
-      {state.appliedCoupon && (
-        <div className="alert alert-success">
-          <span>
-            {state.appliedCoupon.code} applied! {state.appliedCoupon.description}
-          </span>
-          <button
-            className="btn-close"
-            onClick={removeCoupon}
-            style={{ float: 'right' }}
-          >
-            ✕
-          </button>
+      {appliedCoupon && (
+        <div className="mb-4 p-3 bg-green-100 border border-green-300 rounded">
+          <div className="flex justify-between items-center">
+            <span className="text-green-700">
+              Active: {appliedCoupon} ({discount}% off)
+            </span>
+            <button
+              onClick={handleClearCoupon}
+              className="text-red-500 hover:text-red-700 text-sm"
+            >
+              Remove
+            </button>
+          </div>
         </div>
       )}
 
-      <div>
-        <h4>Available Coupons:</h4>
-        {state.coupons.map((coupon, index) => (
-          <div key={index} className="alert alert-info">
-            <strong>{coupon.code}</strong> - {coupon.description}
-          </div>
-        ))}
+      <div className="flex gap-2 mb-4">
+        <input
+          type="text"
+          value={couponInput}
+          onChange={(e) => setCouponInput(e.target.value)}
+          placeholder="Enter coupon code"
+          className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+        />
+        <button
+          onClick={handleApplyCoupon}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Apply
+        </button>
+      </div>
+
+      {message && (
+        <div className={`mb-4 p-2 rounded text-sm ${
+          message.includes('✅') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+        }`}>
+          {message}
+        </div>
+      )}
+
+      <div className="space-y-2">
+        <h3 className="font-semibold text-gray-700">Available Coupons:</h3>
+        <div className="grid grid-cols-2 gap-2">
+          {Object.entries(coupons).map(([code, discount]) => (
+            <div key={code} className="p-2 bg-gray-100 rounded text-sm text-center">
+              <strong>{code}</strong> - {discount}% off
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -743,78 +453,71 @@ const CouponSection = () => {
 
 // Main App Component
 const ShoppingCartApp = () => {
-  const [activeTab, setActiveTab] = useState('products');
-  const { state } = useCart();
+  const [activeTab, setActiveTab] = React.useState('products');
+  const { state } = useShopping();
+  const { cart, wishlist } = state;
+
+  const tabs = [
+    { id: 'products', label: 'Products', icon: '🛍️' },
+    { id: 'cart', label: `Cart (${cart.length})`, icon: '🛒' },
+    { id: 'wishlist', label: `Wishlist (${wishlist.length})`, icon: '💖' },
+    { id: 'coupons', label: 'Coupons', icon: '🎫' }
+  ];
 
   return (
-    <>
-      <style>{styles}</style>
-      <div>
-        <nav className="navbar-expand-lg">
-          <h1 className="text-center">Shopping Cart Redux</h1>  {/* Removed container div */}
-        </nav>
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <h1 className="text-3xl font-bold text-gray-900">🛒 Shopping Cart Redux</h1>
+        </div>
+      </header>
 
-        <div className="container">
-          <ul className="nav nav-tabs">
-            <li className="nav-item">
+      <nav className="bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex space-x-1">
+            {tabs.map(tab => (
               <button
-                className={`nav-link ${activeTab === 'products' ? 'active' : ''}`}
-                onClick={() => setActiveTab('products')}
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-4 py-3 font-medium text-sm transition-colors ${
+                  activeTab === tab.id
+                    ? 'border-b-2 border-blue-500 text-blue-600'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
               >
-                Products ({products.length})
+                {tab.icon} {tab.label}
               </button>
-            </li>
-            <li className="nav-item">
-              <button
-                className={`nav-link ${activeTab === 'cart' ? 'active' : ''}`}
-                onClick={() => setActiveTab('cart')}
-              >
-                Cart ({state.cart.length})
-              </button>
-            </li>
-            <li className="nav-item">
-              <button
-                className={`nav-link ${activeTab === 'wishlist' ? 'active' : ''}`}
-                onClick={() => setActiveTab('wishlist')}
-              >
-                Wishlist ({state.wishlist.length})
-              </button>
-            </li>
-            <li className="nav-item">
-              <button
-                className={`nav-link ${activeTab === 'coupons' ? 'active' : ''}`}
-                onClick={() => setActiveTab('coupons')}
-              >
-                Coupons ({state.coupons.length})
-              </button>
-            </li>
-          </ul>
-
-          <div className="mt-4">
-            {activeTab === 'products' && (
-              <div className="row">
-                {products.map(product => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
-
-            {activeTab === 'cart' && <Cart />}
-            {activeTab === 'wishlist' && <Wishlist />}
-            {activeTab === 'coupons' && <CouponSection />}
+            ))}
           </div>
         </div>
-      </div>
-    </>
+      </nav>
+
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        {activeTab === 'products' && (
+          <div>
+            <h2 className="text-2xl font-bold mb-6">Products</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {sampleProducts.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'cart' && <Cart />}
+        {activeTab === 'wishlist' && <Wishlist />}
+        {activeTab === 'coupons' && <CouponSection />}
+      </main>
+    </div>
   );
 };
 
-// Root App with Provider
+// Root Component with Custom Provider
 const App = () => {
   return (
-    <CartProvider>
+    <ShoppingProvider>
       <ShoppingCartApp />
-    </CartProvider>
+    </ShoppingProvider>
   );
 };
 
