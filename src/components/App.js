@@ -461,39 +461,39 @@ const CouponSection = () => {
 };
 
 // Navigation Component
-// Navigation Component - Fixed to match test expectations
 const Navigation = ({ activeTab, setActiveTab, cart, wishlist }) => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      {/* Remove container-fluid to make text-center a direct child of navbar-expand-lg */}
-      <div className="text-center" style={{ width: '100%' }}>
-        <h1 className="navbar-brand">🛒 Shopping Cart Redux</h1>
-      </div>
-      <div className="navbar-nav" style={{ flexDirection: 'row' }}>
-        <button
-          onClick={() => setActiveTab('products')}
-          className={`nav-link btn ${activeTab === 'products' ? 'active' : ''} me-2`}
-        >
-          🛍️ Products
-        </button>
-        <button
-          onClick={() => setActiveTab('cart')}
-          className={`nav-link btn ${activeTab === 'cart' ? 'active' : ''} me-2`}
-        >
-          🛒 Cart ({cart.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('wishlist')}
-          className={`nav-link btn ${activeTab === 'wishlist' ? 'active' : ''} me-2`}
-        >
-          💖 Wishlist ({wishlist.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('coupons')}
-          className={`nav-link btn ${activeTab === 'coupons' ? 'active' : ''}`}
-        >
-          🎫 Coupons
-        </button>
+      <div className="container">
+        <div className="text-center w-100">
+          <h1 className="navbar-brand mb-0">🛒 Shopping Cart Redux</h1>
+        </div>
+        <div className="d-flex">
+          <button
+            onClick={() => setActiveTab('products')}
+            className={`btn ${activeTab === 'products' ? 'btn-primary' : 'btn-outline-primary'} me-2`}
+          >
+            🛍️ Products
+          </button>
+          <button
+            onClick={() => setActiveTab('cart')}
+            className={`btn ${activeTab === 'cart' ? 'btn-primary' : 'btn-outline-primary'} me-2`}
+          >
+            🛒 Cart ({cart.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('wishlist')}
+            className={`btn ${activeTab === 'wishlist' ? 'btn-primary' : 'btn-outline-primary'} me-2`}
+          >
+            💖 Wishlist ({wishlist.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('coupons')}
+            className={`btn ${activeTab === 'coupons' ? 'btn-primary' : 'btn-outline-primary'}`}
+          >
+            🎫 Coupons
+          </button>
+        </div>
       </div>
     </nav>
   );
