@@ -196,11 +196,11 @@ const ProductCard = ({ product }) => {
   const isInWishlist = wishlist.some(item => item.id === product.id);
 
   return (
-    <div className="custom-card card">
+      <div className="custom-card card">
       <div className="card-body">
         <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
           <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>{product.image}</div>
-          <h5 className="card-title">{product.name}</h5>
+          <h4 className="card-title">{product.name}</h4> {/* Changed from h5 to h4 */}
           <p className="card-text" style={{ fontSize: '0.875rem', color: '#666' }}>{product.category}</p>
           <p className="card-text" style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#007bff' }}>${product.price}</p>
         </div>
@@ -230,6 +230,7 @@ const ProductCard = ({ product }) => {
     </div>
   );
 };
+
 
 // Cart Item Component
 const CartItem = ({ item }) => {
@@ -463,32 +464,32 @@ const CouponSection = () => {
 const Navigation = ({ activeTab, setActiveTab, cart, wishlist }) => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <div className="container-fluid">
-        <div className="text-center" style={{ width: '100%' }}>
-          <h1 className="navbar-brand">🛒 Shopping Cart Redux</h1>
+      <div className="container">
+        <div className="text-center w-100">
+          <h1 className="navbar-brand mb-0">🛒 Shopping Cart Redux</h1>
         </div>
-        <div className="navbar-nav">
+        <div className="d-flex">
           <button
             onClick={() => setActiveTab('products')}
-            className={`nav-link btn ${activeTab === 'products' ? 'active' : ''}`}
+            className={`btn ${activeTab === 'products' ? 'btn-primary' : 'btn-outline-primary'} me-2`}
           >
             🛍️ Products
           </button>
           <button
             onClick={() => setActiveTab('cart')}
-            className={`nav-link btn ${activeTab === 'cart' ? 'active' : ''}`}
+            className={`btn ${activeTab === 'cart' ? 'btn-primary' : 'btn-outline-primary'} me-2`}
           >
             🛒 Cart ({cart.length})
           </button>
           <button
             onClick={() => setActiveTab('wishlist')}
-            className={`nav-link btn ${activeTab === 'wishlist' ? 'active' : ''}`}
+            className={`btn ${activeTab === 'wishlist' ? 'btn-primary' : 'btn-outline-primary'} me-2`}
           >
             💖 Wishlist ({wishlist.length})
           </button>
           <button
             onClick={() => setActiveTab('coupons')}
-            className={`nav-link btn ${activeTab === 'coupons' ? 'active' : ''}`}
+            className={`btn ${activeTab === 'coupons' ? 'btn-primary' : 'btn-outline-primary'}`}
           >
             🎫 Coupons
           </button>
@@ -497,7 +498,6 @@ const Navigation = ({ activeTab, setActiveTab, cart, wishlist }) => {
     </nav>
   );
 };
-
 // Main App Component
 const ShoppingCartApp = () => {
   const [activeTab, setActiveTab] = React.useState('products');
